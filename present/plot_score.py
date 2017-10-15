@@ -6,7 +6,7 @@ def show_score(score_data):
     """
     统计学生得分的分布情况
     横轴为得分，纵轴为人数（个）
-    :param score_data: [{'userid':str, 'score':float}]
+    :param score_data:  [{'userid':str, 'score':float}]
     :return:figure
     """
 
