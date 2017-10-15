@@ -11,7 +11,7 @@ class MysqlConnector:
     def get_student_file(self, student_id, from_date, to_date):
         self.cur.execute(
             "select e.log, e.monitor from auth_user a JOIN exams_examprojects e where a.user_id = e.user_id and username = '%ld' and e.create_time > '%s' and e.create_time < '%s'" % (student_id, from_date, to_date))
-
+        
         for row in self.cur.fetchall():
             print(row[0])
 
