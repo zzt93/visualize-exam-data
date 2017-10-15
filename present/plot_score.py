@@ -7,7 +7,7 @@ def show_score(score_data):
     统计学生得分的分布情况
     横轴为得分，纵轴为人数（个）
     :param score_data: [{'userid':str, 'score':float}]
-    :return:None
+    :return:figure
     """
 
     score_distribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -48,9 +48,10 @@ def show_score(score_data):
         title='学生得分分布柱状图'
     )
 
-    fig = go.Figure(data=data, layout=layout)
+    figure = go.Figure(data=data, layout=layout)
     # print(score_distribution)
-    plotly.offline.plot(fig)    # WEB中显示图片
+    # plotly.offline.plot(fig)    # WEB中显示图片
+    return figure
 
 
 def show_problem_score(score_data: list, problemid: str):
@@ -59,7 +60,7 @@ def show_problem_score(score_data: list, problemid: str):
     横轴为得分，纵轴为人数（个）
     :param score_data: [{'userid':str, 'problemid':str, 'score':float}]
     :param problemid: 题号
-    :return:None
+    :return:figure
     """
     score_distribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     for student in score_data:
@@ -100,6 +101,7 @@ def show_problem_score(score_data: list, problemid: str):
         title='学生题目得分得分分布柱状图 -- '+problemid
     )
 
-    fig = go.Figure(data=data, layout=layout)
+    figure = go.Figure(data=data, layout=layout)
     # print(score_distribution)
-    plotly.offline.plot(fig)  # WEB中显示图片
+    # plotly.offline.plot(fig)  # WEB中显示图片
+    return figure
