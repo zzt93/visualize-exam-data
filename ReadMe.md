@@ -12,7 +12,7 @@
 
    > conda install mysql-connector-python
 
-# 使用Anaconda安装SQLAlchemy
+# 使用Anaconda安装peewee
 
 1. 列出anaconda里的环境：
 
@@ -24,10 +24,9 @@
 
 3. 安装驱动
 
-      > conda install sqlalchemy
+      > pip install peewee
 
 # 材料来源
-
-[廖雪峰的官方网站——使用SQLAlchemy](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000/0014320114981139589ac5f02944601ae22834e9c521415000)
+[peewee官方文档](http://peewee.readthedocs.io/en/latest/index.html) 
 
    ​
