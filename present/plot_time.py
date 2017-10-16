@@ -246,7 +246,6 @@ def show_work_time(all_data: list):
             time_dict[k] += len(user_time_dict[k])
 
     time_dict = sorted(time_dict.items(), key=lambda d: d[0])
-    print(time_dict)
 
     x = []
     y = []
