@@ -1,7 +1,7 @@
 ### \*1. 个人整体情况图：
 import os
 
-from backend.preprocess.single_file import tmp_score
+from backend.preprocess.pre_process import extract_log_score
 
 
 def get_process_personal():
@@ -177,7 +177,7 @@ def get__problem_score():
     # entry = {'userid': userid_value, 'problemid': problemid_value, 'score': score_value}
     :return: score_data
     '''
-    tmp = tmp_score()
+    tmp = extract_log_score()
     res = []
     for sid, value in tmp.items():
         for pid, s in value.items():

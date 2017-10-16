@@ -1,7 +1,38 @@
+import os
+import sqlite3
+
 import pandas as pd
 
 from backend.util.db_action import get_all_information_from_table_as_pd_dataframe, do_sql
-from backend.util.utility import string_to_datetime
+from backend.util.time_utility import string_to_datetime
+
+
+def clean_data(data):
+    pick_id = ''
+    pick_project = ''
+    i = 0
+    while i < len(data.dict_list):
+        item = data.dict_list[i]
+        if item['operator'] == '9':
+            if item['projectname'] == pick_project and item['buildid'] == pick_id:
+                del data.dict_list[i]
+                i -= 1
+                # print(item)
+            else:
+                pick_id = item['buildid']
+                pick_project = item['projectname']
+        i += 1
+    return data
+
+
+def read_data(path):
+    db_path = os.path.join(path, 'monitor', 'Dao', 'log.db')
+    file_path = os.path.join(path, 'plugin')
+    con = sqlite3.connect(db_path)
+    data = combine_database(con)
+    data = clean_data(data)
+    con.close()
+    return data.dict_list
 
 
 def combine_database(con):
@@ -119,19 +150,20 @@ def combine_database(con):
 
         r[OPERATOR] = constant.OperatorType.BUILD
         return r
+
     res.extend(transform_df(buid_joined_df, build_transform))
 
     # transform debug
     # debug part is not implement
-    #debug_info_df = get_all_information_from_table_as_pd_dataframe(con, 'debug_info')
+    # debug_info_df = get_all_information_from_table_as_pd_dataframe(con, 'debug_info')
     debug_break_df = get_all_information_from_table_as_pd_dataframe(con, 'debug_break')
     debug_run_df = get_all_information_from_table_as_pd_dataframe(con, 'debug_run')
 
-    sql = "select debug_info.id as id, debug_info.type as type, debug_info.timestamp as timestamp, " \
-        "debug_info.debug_target as debug_target, debug_run.run_type as run_type, " \
-        "debug_break.break_reason as break_reason from debug_info " \
-        "left join debug_run on debug_info.id = debug_run.id " \
-        "left join debug_break on debug_info.id = debug_break.id "
+    sql = "SELECT debug_info.id AS id, debug_info.type AS type, debug_info.timestamp AS timestamp, " \
+          "debug_info.debug_target AS debug_target, debug_run.run_type AS run_type, " \
+          "debug_break.break_reason AS break_reason FROM debug_info " \
+          "LEFT JOIN debug_run ON debug_info.id = debug_run.id " \
+          "LEFT JOIN debug_break ON debug_info.id = debug_break.id "
     debug_info_df = do_sql(con, sql)
 
     def debug_transform(element):
@@ -154,6 +186,7 @@ def combine_database(con):
             else:
                 r[k] = element[k]
         return r
+
     res.extend(transform_df(debug_info_df, debug_transform))
 
     return res
