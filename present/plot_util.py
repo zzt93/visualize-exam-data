@@ -1,6 +1,7 @@
 import plotly.plotly as py
 import plotly.offline as offline
 import re
+import os
 
 
 def save_as_png(figure, filename):
@@ -22,6 +23,14 @@ def save_as_html(figure, filename):
     :return:
     """
     offline.plot(figure, auto_open=False, filename=filename)
+
+
+def save_as_txt(content, filename):
+    with open(filename, 'w') as f:
+        for student in content:
+            for key in student:
+                f.write(key+':'+str(student[key])+'\t')
+            f.write('\n')
 
 
 def deal_result(content):
