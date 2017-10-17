@@ -1,6 +1,6 @@
 def string_to_datetime(s):
     import datetime
-    return datetime.datetime.strptime(s, '%Y/%m/%d %H:%M:%S')
+    return datetime.datetime.strptime(s, '%Y-%m-%d %H:%M:%S')
 
 
 def timedelta_milliseconds(td):

@@ -1,7 +1,7 @@
 ### \*1. 个人整体情况图：
 import os
 
-from backend.preprocess.pre_process import extract_log_score
+from backend.preprocess.pre_process import merge_log_score
 
 
 def get_process_personal():
@@ -20,6 +20,9 @@ def get_process_personal():
 
 
 ### *2. 编码、调试时间总体情况统计柱状图:
+### 3. 编码、调试时间个人情况统计柱状图:
+### *4. 学生每题编码、调试的平均时间比例统计、分布:
+###  6. 个人每天编码时间统计:
 
 
 def get_time_total():
@@ -28,33 +31,10 @@ def get_time_total():
     # problemid: string
     # code_time: int
     # debug_time: int
-    # entry1 = {'userid': userid_value, 'problemid': problemid_value, 'code_time': code_time_value, 'debug_time': debug_time_value}
+    # entry1 = {'userid': userid_value, 'problemid': problemid_value, `dayid`: int,'code_time': code_time_value, 'debug_time': debug_time_value}
     # return [entry1, entry2]
     return
 
-### 3. 编码、调试时间个人情况统计柱状图:
-
-
-def show_time_personal():
-    # 忽略部分实现细节
-    # userid: string
-    # problemid: string
-    # code_time: int
-    # debug_time: int
-    # entry1 = {'userid': userid_value, 'problemid': problemid_value, 'code_time': code_time_value, 'debug_time': debug_time_value}
-    # user_data = [entry1, entry2……]
-    # userid: string
-    # return {'user_data': user_data_value, 'userid': user_id_value}
-    pass
-
-### *4. 学生每题编码、调试的平均时间比例统计、分布:
-
-
-def get_time_div_total():
-    # 忽略部分实现细节
-    # user_data 参加3
-    # return user_data
-    pass
 
 ### 5. 整体编码时间分布:
 
@@ -65,15 +45,8 @@ def get_work_time():
     # return data
     pass
 
-###  6. 个人每天编码时间统计:
 
 
-def get_work_time_personal():
-    # 忽略部分实现细节
-    # data 定义见1
-    # userid: string
-    # return {'data': data_value, 'userid': userid_value}
-    pass
 
 ## 拷贝：
 
@@ -121,6 +94,7 @@ def get_coding_speed():
     # return speed_data
     pass
 
+
 ## 调试：
 
 ### 10. 题目调试次数统计:
@@ -134,6 +108,7 @@ def get_debug_personal():
     # return {'data': data_value, 'userid': userid_value, 'problemid': problemid_value}
     pass
 
+
 ### \*11. 学生整体调试次数分布统计:
 
 
@@ -146,6 +121,7 @@ def get_debug_total():
     # entry = {'userid': userid_value, 'debug_count': debug_count_value}
     # return debug_count_data
     pass
+
 
 ## 得分：
 
@@ -177,7 +153,7 @@ def get__problem_score():
     # entry = {'userid': userid_value, 'problemid': problemid_value, 'score': score_value}
     :return: score_data
     '''
-    tmp = extract_log_score()
+    tmp = merge_log_score()
     res = []
     for sid, value in tmp.items():
         for pid, s in value.items():
@@ -202,6 +178,7 @@ def get_build_error_count():
     # return build_error_data
     pass
 
+
 ### *15. 编译失败的次数分布:
 
 
@@ -217,6 +194,7 @@ def get__build_failed_count():
     # return build_failed_data
     pass
 
+
 ### *16. 每题编码时间过少的人:
 
 
@@ -230,6 +208,19 @@ def get__time_less():
     # mean_time: float
     # entry = {'userid': userid_value, 'problemid': problemid_value, 'user_time': user_time_value, 'mean_time': mean_time_value}
     # return user_list
+    pass
+
+
+def get_all_user_id():
+
+    pass
+
+
+def get_all_day_id():
+    pass
+
+
+def get_all_problem_id():
     pass
 
 

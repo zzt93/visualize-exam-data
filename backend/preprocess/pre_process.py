@@ -3,6 +3,7 @@ from zipfile import ZipFile
 
 from backend.util.config import *
 from backend.util.log_data_transform import transform_test_log
+from backend.util.monitor_data_transform import read_data
 from backend.util.mysql_connector import MysqlConnector
 from backend.util.scan_database import scan_dir
 
@@ -36,7 +37,7 @@ def extract_score(log_file_zip):
     return log
 
 
-def extract_log_score():
+def merge_log_score():
     file_to_id = file_to_sid()
     score = {}
     for sid in range(STUDENT_ID_START, STUDENT_ID_END):
@@ -59,23 +60,21 @@ def extract_log_score():
 
 
 def extract_monitor(monitor_file_zip):
-    monitor_handler = []
     if os.path.isfile(monitor_file_zip):
         with ZipFile(monitor_file_zip) as myzip:
             for f in myzip.infolist():
                 (filepath, tempfilename) = os.path.split(f.filename)
-                (shortname, extension) = os.path.splitext(tempfilename)
-                if shortname == 'app':
-                    monitor_handler.append(myzip.open(f.filename))
+                if tempfilename == r'Dao\log.db':
+                    return read_data(myzip.extract(f, path='/tmp'))
 
 
 
-def extract_monitor_info():
+def merge_monitor_info():
     file_to_id = file_to_sid()
     for file_name in scan_dir(MONITOR_DIR):
         if file_name not in file_to_id:
             continue
-        extract_monitor(file_name)
+        monitor_list = extract_monitor(file_name)
         sid = file_to_id[file_name]
 
 
@@ -95,4 +94,4 @@ def sort_by_time():
 
 if __name__ == '__main__':
     os.chdir('../../')
-    extract_monitor_info()
+    merge_monitor_info()
