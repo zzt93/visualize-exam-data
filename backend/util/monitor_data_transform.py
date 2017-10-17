@@ -1,4 +1,3 @@
-import os
 import sqlite3
 
 import pandas as pd
@@ -11,11 +10,11 @@ def clean_data(data):
     pick_id = ''
     pick_project = ''
     i = 0
-    while i < len(data.dict_list):
-        item = data.dict_list[i]
+    while i < len(data):
+        item = data[i]
         if item['operator'] == '9':
             if item['projectname'] == pick_project and item['buildid'] == pick_id:
-                del data.dict_list[i]
+                del data[i]
                 i -= 1
                 # print(item)
             else:
@@ -25,14 +24,13 @@ def clean_data(data):
     return data
 
 
-def read_data(path):
-    db_path = os.path.join(path, 'monitor', 'Dao', 'log.db')
-    file_path = os.path.join(path, 'plugin')
-    con = sqlite3.connect(db_path)
+def read_data(filename):
+    # file_path = os.path.join(path, 'plugin')
+    con = sqlite3.connect(filename)
     data = combine_database(con)
     data = clean_data(data)
     con.close()
-    return data.dict_list
+    return data
 
 
 def combine_database(con):
