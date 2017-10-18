@@ -2,6 +2,13 @@ from peewee import *
 
 db = MySQLDatabase('visualize_exam', user='root', charset='utf8mb4')
 
+def before_request_handler():
+    db.connect()
+
+
+
+def after_request_handler():
+    db.close()
 
 
 class BaseModel(Model):
@@ -21,6 +28,10 @@ class StudentInExam(BaseModel):
     class Meta:
         primary_key = CompositeKey('student_id', 'exam_id')
 
+class QuestionInExam(BaseModel):
+    exam_id = ForeignKeyField(Exam)
+    question_id = IntegerField(unique=True)
+
 # 13.学生题目得分分布柱状图
 # 16.每题编码时间过少的人
 class StudentQuestionResult(BaseModel):
@@ -30,7 +41,7 @@ class StudentQuestionResult(BaseModel):
     score = FloatField(default=0)
     exam_id = ForeignKeyField(Exam)
     class Meta:
-        primary_key = CompositeKey('question_id', 'student_id', 'exam_id')
+        primary_key = CompositeKey('question_id', 'student_id')
 
 
 
@@ -42,9 +53,8 @@ class Operation(BaseModel):
     op_happen_time = TimestampField()
     op_last_time = IntegerField()
     student_id = ForeignKeyField(Student)
-    exam_id = ForeignKeyField(Exam)
     class Meta:
-        primary_key = CompositeKey('op_happen_time', 'student_id', 'exam_id')
+        primary_key = CompositeKey('op_happen_time', 'student_id')
 
 # 2.编码、调试时间总体情况统计柱状图
 # 3.编码、调试时间个人情况统计柱状图
@@ -56,9 +66,8 @@ class CodeAndDebugTime(BaseModel):
     code_time = IntegerField()
     debug_time = IntegerField()
     date = DateField()
-    exam_id = ForeignKeyField(Exam)
     class Meta:
-        primary_key = CompositeKey('student_id', 'question_id', 'exam_id')
+        primary_key = CompositeKey('student_id', 'question_id')
 
 
 # 7.个人外来粘贴字符数统计柱状图
@@ -68,9 +77,8 @@ class Paste(BaseModel):
     question_id = IntegerField()
     paste_content = CharField()
     paste_type = IntegerField()
-    exam_id = ForeignKeyField(Exam)
     class Meta:
-        primary_key = CompositeKey('student_id', 'question_id', 'exam_id')
+        primary_key = CompositeKey('student_id', 'question_id')
 
 
 # 9.平均编码速度分布图
@@ -85,9 +93,7 @@ class Speed(BaseModel):
 class Debug(BaseModel):
     student_id = ForeignKeyField(Student)
     debug_count = IntegerField(default=1)
-    exam_id = ForeignKeyField(Exam)
-    class Meta:
-        primary_key = CompositeKey('student_id', 'exam_id')
+
 
 
 # 14.编译错误出现的次数分布
@@ -95,9 +101,8 @@ class BuildError(BaseModel):
     question_id = IntegerField()
     error_code = CharField()
     count = IntegerField()
-    exam_id = ForeignKeyField(Exam)
     class Meta:
-        primary_key = CompositeKey('question_id', 'error_code', 'exam_id')
+        primary_key = CompositeKey('question_id', 'error_code')
 
 
 # 15.编译失败的次数分布
@@ -106,6 +111,5 @@ class BuildFailure(BaseModel):
     question_id = IntegerField()
     failed_count = IntegerField()
     success_count = IntegerField()
-    exam_id = ForeignKeyField(Exam)
     class Meta:
-        primary_key = CompositeKey('student_id', 'question_id', 'exam_id')
+        primary_key = CompositeKey('student_id', 'question_id')
