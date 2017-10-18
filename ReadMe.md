@@ -29,4 +29,8 @@
 # 材料来源
 [peewee官方文档](http://peewee.readthedocs.io/en/latest/index.html) 
 
+# 发现程序运行报错了
+1. 新建一个MySQL数据库，表名为"visualize_exam", 字符集为"utf8mb4"
+2. 打开database.model.py，运行该文件的create_tables()函数
+
    ​
