@@ -103,7 +103,7 @@ class Debug(BaseModel):
 
 # 14.编译错误出现的次数分布
 class BuildError(BaseModel):
-    question_id = IntegerField()
+    question_id = ForeignKeyField(QuestionInExam)
     error_code = CharField()
     count = IntegerField()
     class Meta:
@@ -182,11 +182,11 @@ def insert_test():
     #     dc = random.randint(0, 100)
     #     Debug.create(student_id = sid, debug_count = dc)
 
-    #######BuildError
-    # for qid in range(1, 15):
-    #     for ec in range(1, 6):
-    #         c = random.randint(0, 100)
-    #         BuildError.create(question_id = qid, error_code = ec, count = c)
+    ######BuildError
+    for qid in range(1, 15):
+        for ec in range(1, 6):
+            c = random.randint(0, 100)
+            BuildError.create(question_id = qid, error_code = ec, count = c)
 
     #######BuildFailure
     # for sid in range(1, 100):
@@ -215,5 +215,5 @@ def create_tables():
 
 
 # create_tables()
-# db.create_table(Debug)
-# insert_test()
+db.create_table(BuildError)
+insert_test()
