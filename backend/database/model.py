@@ -3,9 +3,6 @@ from peewee import *
 db = MySQLDatabase('visualize_exam', user='root', charset='utf8mb4')
 
 
-# naming: use question_id (not problem_id), student_id (user_id)
-# todo support multiple exams
-# question_id type: int
 
 class BaseModel(Model):
     class Meta:
@@ -24,11 +21,12 @@ class StudentInExam(BaseModel):
     class Meta:
         primary_key = CompositeKey('student_id', 'exam_id')
 
+# 13.学生题目得分分布柱状图
 # 16.每题编码时间过少的人
 class StudentQuestionResult(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = IntegerField()
-    used_time = FloatField()
+    used_time = IntegerField()
     score = FloatField(default=0)
     exam_id = ForeignKeyField(Exam)
     class Meta:
@@ -39,9 +37,8 @@ class StudentQuestionResult(BaseModel):
 # 1.个人整体情况图
 # 5.整体编码时间分布
 # 10.题目调试次数统计
-# TODO there may be some problems, the model may be modified
 class Operation(BaseModel):
-    op_type = CharField()
+    op_type = IntegerField()
     op_happen_time = TimestampField()
     op_last_time = IntegerField()
     student_id = ForeignKeyField(Student)
@@ -81,6 +78,7 @@ class Paste2(BaseModel):
     question_id = IntegerField()
     paste_content = CharField()
     count = IntegerField()
+    paste_type = IntegerField()
     exam_id = ForeignKeyField(Exam)
     class Meta:
         primary_key = CompositeKey('student_id', 'question_id', 'exam_id')
@@ -97,28 +95,10 @@ class Speed(BaseModel):
 # 11.学生整体调试次数分布统计
 class Debug(BaseModel):
     student_id = ForeignKeyField(Student)
-    debug_count = IntegerField()
+    debug_count = IntegerField(default=1)
     exam_id = ForeignKeyField(Exam)
     class Meta:
         primary_key = CompositeKey('student_id', 'exam_id')
-
-
-# 12.学生得分分布柱状图
-class ScoreInTotal(BaseModel):
-    student_id = ForeignKeyField(Student)
-    score = FloatField()
-    exam_id = ForeignKeyField(Exam)
-    class Meta:
-        primary_key = CompositeKey('student_id', 'exam_id')
-
-# 13.学生题目得分分布柱状图
-class ScoreInProblem(BaseModel):
-    student_id = ForeignKeyField(Student)
-    question_id = IntegerField()
-    score = FloatField()
-    exam_id = ForeignKeyField(Exam)
-    class Meta:
-        primary_key = CompositeKey('student_id', 'question_id', 'exam_id')
 
 
 # 14.编译错误出现的次数分布
@@ -128,7 +108,7 @@ class BuildError(BaseModel):
     count = IntegerField()
     exam_id = ForeignKeyField(Exam)
     class Meta:
-        primary_key = CompositeKey('problem', 'error_code', 'exam_id')
+        primary_key = CompositeKey('question_id', 'error_code', 'exam_id')
 
 
 # 15.编译失败的次数分布

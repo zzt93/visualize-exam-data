@@ -2,6 +2,7 @@
 import os
 
 from backend.preprocess.pre_process import merge_log_score
+from backend.util.config import EID
 
 
 def get_process_personal():
@@ -143,7 +144,7 @@ def get_score():
 
 
 
-def get__problem_score():
+def get__problem_score(eid=EID):
     '''
     # score_data: List
     # score_data = [entry1, entry2, ……]
@@ -153,7 +154,7 @@ def get__problem_score():
     # entry = {'userid': userid_value, 'problemid': problemid_value, 'score': score_value}
     :return: score_data
     '''
-    tmp = merge_log_score()
+    tmp = merge_log_score(eid)
     res = []
     for sid, value in tmp.items():
         for pid, s in value.items():

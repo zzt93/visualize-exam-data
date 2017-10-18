@@ -61,7 +61,13 @@ def combine_database(con):
         '''
         if not isinstance(df, pd.DataFrame):
             raise ValueError("should be a pd.DataFrame object")
-        return [transform_action(r[1]) for r in df.iterrows()]
+        res = []
+        for r in df.iterrows():
+            try:
+                res.append(transform_action(r[1]))
+            except ValueError:
+                print('Fail to parse time')
+        return res
 
     # transform the command_text table
     command_text_df = get_all_information_from_table_as_pd_dataframe(con, constant.COMMAND_TEXT)

@@ -21,3 +21,14 @@ class MysqlConnector:
 
     def close(self):
         self.db.close()
+
+    def get_all_student(self, eid):
+        self.cur.execute("select distinct(a.username) from exams_examprojects e join auth_user a where a.id = e.user_id and exam_id = {}".format(eid))
+        res = []
+        for row in self.cur.fetchall():
+            res.append(row[0])
+        return res
+
+    def get_all_question(self, eid):
+        self.cur.execute("select question_id from exams_examquestion where exam_id = {}".format(eid))
+        return [row[0] for row in self.cur.fetchall()]
