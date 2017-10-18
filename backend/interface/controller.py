@@ -3,6 +3,7 @@ import os
 
 from backend.preprocess.pre_process import merge_log_score
 from backend.util.config import EID
+from backend.util.mysql_connector import MysqlConnector
 
 
 def get_process_personal():
@@ -154,7 +155,7 @@ def get__problem_score(eid=EID):
     # entry = {'userid': userid_value, 'problemid': problemid_value, 'score': score_value}
     :return: score_data
     '''
-    tmp = merge_log_score(eid)
+    tmp, discard = merge_log_score(eid)
     res = []
     for sid, value in tmp.items():
         for pid, s in value.items():
@@ -221,10 +222,18 @@ def get_all_day_id():
     pass
 
 
+question_id_set = None
+
 def get_all_problem_id():
-    pass
+    global question_id_set
+    if question_id_set is None:
+        mysql = MysqlConnector()
+        question_id_set = mysql.get_question_set(EID)
+        mysql.close()
+    return question_id_set
 
 
 if __name__ == '__main__':
     os.chdir('../../')
-    print(get__problem_score())
+    # print(get__problem_score())
+    print(get_all_problem_id())

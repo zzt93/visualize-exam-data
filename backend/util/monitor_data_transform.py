@@ -66,7 +66,7 @@ def combine_database(con):
             try:
                 res.append(transform_action(r[1]))
             except ValueError:
-                print('Fail to parse time')
+                print('Fail to parse {}', r[1])
         return res
 
     # transform the command_text table

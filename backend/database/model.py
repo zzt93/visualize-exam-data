@@ -44,6 +44,13 @@ class StudentQuestionResult(BaseModel):
         primary_key = CompositeKey('question_id', 'student_id')
 
 
+class TestCase(BaseModel):
+    student_id = ForeignKeyField(Student)
+    question_id = IntegerField()
+    ac_list = CharField()
+    wrong_list = CharField()
+    test_id = PrimaryKeyField()
+
 
 # 1.个人整体情况图
 # 5.整体编码时间分布
@@ -97,16 +104,8 @@ class Debug(BaseModel):
 
 
 # 14.编译错误出现的次数分布
-class BuildError(BaseModel):
-    question_id = IntegerField()
-    error_code = CharField()
-    count = IntegerField()
-    class Meta:
-        primary_key = CompositeKey('question_id', 'error_code')
-
-
 # 15.编译失败的次数分布
-class BuildFailure(BaseModel):
+class BuildResult(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = IntegerField()
     failed_count = IntegerField()

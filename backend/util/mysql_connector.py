@@ -29,6 +29,6 @@ class MysqlConnector:
             res.append(row[0])
         return res
 
-    def get_all_question(self, eid):
+    def get_question_set(self, eid):
         self.cur.execute("select question_id from exams_examquestion where exam_id = {}".format(eid))
-        return [row[0] for row in self.cur.fetchall()]
+        return set([row[0] for row in self.cur.fetchall()])

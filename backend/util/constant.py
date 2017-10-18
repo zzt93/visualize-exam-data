@@ -87,3 +87,5 @@ class OperatorType:
             return 'test'
         elif 19 <= id <= 22:
             return 'text'
+
+INVALID = -1
