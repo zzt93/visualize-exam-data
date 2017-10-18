@@ -1,6 +1,6 @@
 ### \*1. 个人整体情况图：
 import os
-
+from backend.database.model import *
 from backend.preprocess.pre_process import merge_log_score
 from backend.util.config import EID
 from backend.util.mysql_connector import MysqlConnector
@@ -15,9 +15,9 @@ def get_process_personal():
     # op_happen_time: timestamp, 操作发生的时间
     # op_last_time: int, 操作持续时间
     # 例：entry = {'op_type': op_type_value, 'op_happen_time': op_happen_time_value, 'op_last_time': op_last_time_value}
-    # userid: string
+    # student_id: string
     # dayid: int, 天数的id
-    # return {'data': data_value, 'userid': userid_value, 'dayid': dayid_value}
+    # return {'data': data_value, 'student_id': student_id_value, 'dayid': dayid_value}
     pass
 
 
@@ -28,14 +28,19 @@ def get_process_personal():
 
 
 def get_time_total():
-    # 忽略部分实现细节
-    # userid: string
-    # problemid: string
+    # student_id: string
+    # question_id: string
     # code_time: int
     # debug_time: int
-    # entry1 = {'userid': userid_value, 'problemid': problemid_value, `dayid`: int,'code_time': code_time_value, 'debug_time': debug_time_value}
+    # dayid: date
+    # entry1 = {'student_id': student_id_value, 'question_id': question_id_value, `dayid`: int,'code_time': code_time_value, 'debug_time': debug_time_value}
     # return [entry1, entry2]
-    return
+    total = []
+    for cdt in CodeAndDebugTime.select():
+        entry = {'student_id': cdt.student_id, 'question_id': cdt.question_id,
+                 'dayid':cdt.date,  'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
+        total.append(entry)
+    return total
 
 
 ### 5. 整体编码时间分布:
@@ -58,12 +63,12 @@ def get_work_time():
 def get_paste_length_personal():
     # paste_data: List
     # paste_data = [entry1, entry2……]
-    # userid: string
-    # problemid: string
+    # student_id: string
+    # question_id: string
     # paste_content: string
-    # entry = {'userid': userid_value, 'problemid': problemid_value, 'paste_content': paste_content_value}
-    # userid: string
-    # return {'paste_data': paste_data_value, 'userid': userid_value}
+    # entry = {'student_id': student_id_value, 'question_id': question_id_value, 'paste_content': paste_content_value}
+    # student_id: string
+    # return {'paste_data': paste_data_value, 'student_id': student_id_value}
     pass
 
     ### *8. 粘贴内容分类统计柱状图:
@@ -72,12 +77,12 @@ def get_paste_length_personal():
 def get_paste_content_classification():
     # paste_data: List
     # paste_data = [entry1, entry2,……]
-    # userid: string
-    # problemid: string
+    # student_id: string
+    # question_id: string
     # paste_class: string
     # count: int
-    # entry = {'userid': userid_value, 'problemid': problemid_value, 'paste_class': paste_class_value, 'count': count_value}
-    # userid: string
+    # entry = {'student_id': student_id_value, 'question_id': question_id_value, 'paste_class': paste_class_value, 'count': count_value}
+    # student_id: string
     # return {'paste_data': paste_data, 'user_id': user_id_value}
     pass
     ## 插入： speed的单位是字符 / 分钟
@@ -90,9 +95,9 @@ def get_paste_content_classification():
 def get_coding_speed():
     # speed_data: List
     # speed_data = [entry1, entry2, ……]
-    # userid: string
+    # student_id: string
     # speed: float
-    # entry = {'userid': userid_value, 'speed': speed_value}
+    # entry = {'student_id': student_id_value, 'speed': speed_value}
     # return speed_data
     pass
 
@@ -105,9 +110,9 @@ def get_coding_speed():
 
 def get_debug_personal():
     # data定义见1
-    # userid: string
-    # problemid: string
-    # return {'data': data_value, 'userid': userid_value, 'problemid': problemid_value}
+    # student_id: string
+    # question_id: string
+    # return {'data': data_value, 'student_id': student_id_value, 'question_id': question_id_value}
     pass
 
 
@@ -118,9 +123,9 @@ def get_debug_personal():
 def get_debug_total():
     # debug_count_data: List
     # debug_count_data = [entry1, entry2, ……]
-    # userid: string
+    # student_id: string
     # debug_count: int
-    # entry = {'userid': userid_value, 'debug_count': debug_count_value}
+    # entry = {'student_id': student_id_value, 'debug_count': debug_count_value}
     # return debug_count_data
     pass
 
@@ -134,9 +139,9 @@ def get_debug_total():
 def get_score():
     # score_data: List
     # score_data = [entry1, entry2, ……]
-    # userid: string
+    # student_id: string
     # score: float
-    # entry = {'userid': userid_value, 'score': score_value}
+    # entry = {'student_id': student_id_value, 'score': score_value}
     pass
     # return score_data
 
@@ -145,24 +150,24 @@ def get_score():
 
 
 
-def get__problem_score(eid=EID):
+def get_problem_score(eid=EID):
     '''
     # score_data: List
     # score_data = [entry1, entry2, ……]
-    # userid: string
-    # problemid: string
+    # student_id: string
+    # question_id: string
     # score: float
-    # entry = {'userid': userid_value, 'problemid': problemid_value, 'score': score_value}
+    # entry = {'student_id': student_id_value, 'question_id': question_id_value, 'score': score_value}
     :return: score_data
     '''
     tmp, discard = merge_log_score(eid)
     res = []
     for sid, value in tmp.items():
         for pid, s in value.items():
-            res.append({'userid': sid, 'problemid': pid, 'score': s})
+            res.append({'student_id': sid, 'question_id': pid, 'score': s})
 
     return res
-
+# TODO 问一下第13个方法是不是要重写一下
 
 ## 编译：
 
@@ -173,10 +178,10 @@ def get__problem_score(eid=EID):
 def get_build_error_count():
     # build_error_data: List
     # build_error_data = [entry1, entry2, ……]
-    # problemid: string
+    # question_id: string
     # error_code: string
     # count: int
-    # entry = {'problemid': problemid_value, 'error_code': error_code_value, 'count': count_value}
+    # entry = {'question_id': question_id_value, 'error_code': error_code_value, 'count': count_value}
     # return build_error_data
     pass
 
@@ -185,30 +190,27 @@ def get_build_error_count():
 
 
 
-def get__build_failed_count():
+def get_build_failed_count():
     # build_data: List
     # build_data = [entry1, entry2, ……]
-    # problemid: string
-    # userid: string
+    # question_id: string
+    # student_id: string
     # failed_count: int
     # success_count: int
-    # entry = {'problemid': problemid_value, 'userid': userid_value, 'failed_count': failed_count_value, 'success_count': success_count_value}
+    # entry = {'question_id': question_id_value, 'student_id': student_id_value, 'failed_count': failed_count_value, 'success_count': success_count_value}
     # return build_failed_data
     pass
 
 
 ### *16. 每题编码时间过少的人:
-
-
-
-def get__time_less():
+def get_time_less():
     # user_list: List
     # user_list = [entry1, entry2, ……]
-    # userid: string
-    # problemid: string
+    # student_id: string
+    # question_id: string
     # user_time: float
     # mean_time: float
-    # entry = {'userid': userid_value, 'problemid': problemid_value, 'user_time': user_time_value, 'mean_time': mean_time_value}
+    # entry = {'student_id': student_id_value, 'question_id': question_id_value, 'user_time': user_time_value, 'mean_time': mean_time_value}
     # return user_list
     pass
 
