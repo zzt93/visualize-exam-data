@@ -62,22 +62,11 @@ class CodeAndDebugTime(BaseModel):
 
 
 # 7.个人外来粘贴字符数统计柱状图
+# 8.粘贴内容分类统计柱状图
 class Paste(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = IntegerField()
     paste_content = CharField()
-    exam_id = ForeignKeyField(Exam)
-    class Meta:
-        primary_key = CompositeKey('student_id', 'question_id', 'exam_id')
-
-
-# 8.粘贴内容分类统计柱状图
-# TODO 可能要换个名字是不是。。。也可能需要直接去掉上面那个Paste
-class Paste2(BaseModel):
-    student_id = ForeignKeyField(Student)
-    question_id = IntegerField()
-    paste_content = CharField()
-    count = IntegerField()
     paste_type = IntegerField()
     exam_id = ForeignKeyField(Exam)
     class Meta:
