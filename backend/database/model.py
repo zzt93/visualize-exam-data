@@ -62,7 +62,6 @@ class TestCase(BaseModel):
 class Operation(BaseModel):
     op_type = IntegerField()
     op_happen_time = TimestampField()
-    op_last_time = IntegerField(default=0)
     student_id = ForeignKeyField(Student)
     class Meta:
         primary_key = CompositeKey('op_happen_time', 'student_id')
@@ -74,8 +73,8 @@ class Operation(BaseModel):
 class CodeAndDebugTime(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = IntegerField()
-    code_time = IntegerField()
-    debug_time = IntegerField()
+    code_time = IntegerField(default=0, help_text='unit: second')
+    debug_time = IntegerField(default=0, help_text='unit: second')
     date = DateField()
     class Meta:
         primary_key = CompositeKey('student_id', 'question_id', 'date')
@@ -90,7 +89,7 @@ class Paste(BaseModel):
     paste_type = IntegerField()
     happen_time = DateTimeField()
     class Meta:
-        primary_key = CompositeKey('student_id', 'question_id', 'paste_type')
+        primary_key = CompositeKey('student_id', 'question_id', 'happen_time')
 
 
 # 9.平均编码速度分布图
