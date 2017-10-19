@@ -50,7 +50,7 @@ class StudentQuestionResult(BaseModel):
 
 class TestCase(BaseModel):
     student_id = ForeignKeyField(Student)
-    question_id = IntegerField()
+    question_id = ForeignKeyField(QuestionInExam)
     ac_list = CharField()
     wrong_list = CharField()
     test_id = PrimaryKeyField()
@@ -190,10 +190,10 @@ def insert_test():
     #     Debug.create(student_id = sid, debug_count = dc)
 
     ######BuildError
-    for qid in range(1, 15):
-        for ec in range(1, 6):
-            c = random.randint(0, 100)
-            BuildError.create(question_id = qid, error_code = ec, count = c)
+    # for qid in range(1, 15):
+    #     for ec in range(1, 6):
+    #         c = random.randint(0, 100)
+    #         BuildError.create(question_id = qid, error_code = ec, count = c)
 
     #######BuildFailure
     # for sid in range(1, 100):
@@ -223,5 +223,5 @@ def create_tables():
 
 if __name__ == '__main__':
     # create_tables()
-    db.create_table(BuildError)
-    insert_test()
+    db.create_table(TestCase)
+    # insert_test()
