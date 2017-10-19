@@ -62,7 +62,7 @@ def get_time_div_total():
         data.append({'question_id': qid.question_id, 'debug_time': total_debug_time / cnt, 'code_time': total_code_time / cnt})
     return data
 
-
+# TODO
 ###  6. 个人每天编码时间统计:
 
 
@@ -227,7 +227,6 @@ def get_build_failed_count():
     pass
 
 
-# TODO
 ### *16. 每题编码时间过少的人:
 def get_time_less():
     # user_list: List
@@ -238,7 +237,23 @@ def get_time_less():
     # mean_time: float
     # entry = {'student_id': student_id_value, 'question_id': question_id_value, 'user_time': user_time_value, 'mean_time': mean_time_value}
     # return user_list
-    pass
+    user_list = []
+    for ques in QuestionInExam.select():
+        cnt = 0
+        total_time = 0
+        for stu in StudentQuestionResult.select().where(StudentQuestionResult.question_id == ques.question_id):
+            total_time += stu.used_time
+            cnt += 1
+        if cnt == 0:
+            cnt = 1
+        mean_time = total_time / cnt
+        print(mean_time, ques.question_id)
+        for stu in StudentQuestionResult.select().where(StudentQuestionResult.question_id == ques.question_id):
+            if stu.used_time < 0.2 * mean_time:
+                entry = {'student_id': stu.student_id.student_id, 'question_id': ques.question_id, 'used_time': stu.used_time,
+                         'mean_time': mean_time}
+                user_list.append(entry)
+    return user_list
 
 
 def get_all_user_id():
@@ -264,5 +279,5 @@ def get_all_problem_id():
 if __name__ == '__main__':
     os.chdir('../../')
     # print(get__problem_score())
-    print(get_time_div_total())
+    print(get_time_less())
     # print(datetime.datetime.now().date())
