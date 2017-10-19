@@ -90,7 +90,7 @@ class Paste(BaseModel):
     paste_type = IntegerField()
     happen_time = DateTimeField()
     class Meta:
-        primary_key = CompositeKey('student_id', 'question_id', 'paste_type')
+        primary_key = CompositeKey('student_id', 'question_id', 'paste_type', 'happen_time')
 
 
 # 9.平均编码速度分布图
@@ -147,14 +147,14 @@ def insert_test():
     # eid = 2
     # for qid in range(16, 27):
     #     QuestionInExam.create(question_id = qid, exam_id = eid)
-
-    #######StudentQuestionResult
+    #
+    # ######StudentQuestionResult
     # for qid in range(1, 16):
     #     for sid in range(1, 220):
     #         ut = random.randint(0, 300)
     #         sc = random.random() * 100
     #         StudentQuestionResult.create(student_id = sid, question_id = qid, used_time = ut, score = sc)
-
+    #
     # #######Operation
     # for t in range(1, 5):
     #     for sid in range(1, 200):
@@ -162,15 +162,15 @@ def insert_test():
     #         oht = time.time()
     #         olt = random.randint(10, 200)
     #         Operation.create(op_type = ot, op_happen_time = oht, op_last_time = olt, student_id=str(sid))
-    #######CodeAndDebugTime
+    # ######CodeAndDebugTime
     # for sid in range(1, 100):
     #     for qid in range(1, 15):
     #         ct = random.randint(50, 500)
     #         dt = random.randint(0, 200)
     #         d = datetime.datetime.now().strftime('%Y-%m-%d')
     #         CodeAndDebugTime.create(student_id = sid, question_id = qid, code_time = ct, debug_time = dt, date = d)
-
-    ######Paste
+    #
+    # #####Paste
     # for pt in range(1, 5):
     #     for sid in range(1, 50):
     #         for qid in range(1, 11):
@@ -178,42 +178,33 @@ def insert_test():
     #             salt = ''.join(random.sample(string.ascii_letters + string.digits, len))
     #             ht = datetime.datetime.now()
     #             Paste.create(student_id = str(sid), question_id = qid, paste_content = salt, paste_type = pt, happen_time = ht)
-    #######Speed
+    # ######Speed
     # for sid in range(1, 100):
     #     for eid in range(1, 3):
     #         s = random.random() * 100
     #         Speed.create(student_id = sid, speed = s, exam_id = eid)
-
-    #######Debug
+    #
+    # ######Debug
     # for sid in range(1, 200):
     #     dc = random.randint(0, 100)
     #     Debug.create(student_id = sid, debug_count = dc)
-
-    ######BuildError
+    #
+    # #####BuildError
     # for qid in range(1, 15):
     #     for ec in range(1, 6):
     #         c = random.randint(0, 100)
     #         BuildError.create(question_id = qid, error_code = ec, count = c)
-
-    #######BuildFailure
+    #
+    # ######BuildResult
     # for sid in range(1, 100):
     #     for qid in range(1, 18):
     #         fc = random.randint(0, 30)
     #         sc = random.randint(0, 60)
-    #         BuildFailure.create(student_id = sid, question_id = qid, failed_count = fc, success_count = sc)
+    #         BuildResult.create(student_id = sid, question_id = qid, failed_count = fc, success_count = sc)
     pass
 
 
-#
-#
-# # 15.编译失败的次数分布
-# class BuildFailure(BaseModel):
-#     student_id = ForeignKeyField(Student)
-#     question_id = IntegerField()
-#     failed_count = IntegerField()
-#     success_count = IntegerField()
-#     class Meta:
-#         primary_key = CompositeKey('student_id', 'question_id')
+
 
 def create_tables():
     db.connect()
@@ -223,5 +214,6 @@ def create_tables():
 
 if __name__ == '__main__':
     # create_tables()
-    db.create_table(TestCase)
+    # db.create_table(TestCase)
     # insert_test()
+    pass

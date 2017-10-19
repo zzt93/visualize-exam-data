@@ -1,4 +1,5 @@
 import locale
+import datetime
 
 
 def string_to_datetime(s):
@@ -18,5 +19,22 @@ def string_to_datetime(s):
                 locale.setlocale(locale.LC_ALL, 'zh_CN.UTF-8')
                 return datetime.datetime.strptime(s, '%Y/%m/%d/%a %H:%M:%S')
 
+
 def timedelta_milliseconds(td):
     return td.days * 86400000 + td.seconds * 1000 + td.microseconds / 1000
+
+
+def timestamp_datetime(ts):
+    if isinstance(ts, (int, float, str)):
+        try:
+            ts = int(ts)
+        except ValueError:
+            raise
+
+        if len(str(ts)) == 13:
+            ts = int(ts / 1000)
+        if len(str(ts)) != 10:
+            raise ValueError
+    else:
+        raise ValueError()
+    return datetime.fromtimestamp(ts)

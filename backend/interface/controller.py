@@ -1,4 +1,3 @@
-### \*1. 个人整体情况图：
 import os
 from backend.database.model import *
 from backend.preprocess.pre_process import merge_log_score
@@ -6,46 +5,71 @@ from backend.util.config import EID
 from backend.util.mysql_connector import MysqlConnector
 
 
+### *1. 个人整体情况图：
 def get_process_personal():
-    # 省略部分实现细节
-    # data: List, 包含去重之后的 某人 某天 的全部操作记录
-    # 例：data_value = [entry1, entry2, entry3]
-    # entry: Map, 一条操作记录
-    # op_type: Enum, 操作类型
-    # op_happen_time: timestamp, 操作发生的时间
-    # op_last_time: int, 操作持续时间
-    # 例：entry = {'op_type': op_type_value, 'op_happen_time': op_happen_time_value, 'op_last_time': op_last_time_value}
-    # student_id: string
-    # dayid: int, 天数的id
-    # return {'data': data_value, 'student_id': student_id_value, 'dayid': dayid_value}
-    pass
+    result = []
+    for stu in Student.select():
+        day_op = {}
+        for op in Operation.select().where(Operation.student_id == stu.student_id):
+            day = op.op_happen_time.date()
+            entry = {'op_type': op.op_type, 'op_happen_time': op.op_happen_time, 'op_last_time': op.op_last_time}
+            if day in day_op:
+                day_op[day].append(entry)
+            else:
+                day_op[day] = [entry]
+            for key in day_op:
+                record = {'data': day_op[key], 'student_id': stu.student_id, 'dayid': key}
+                result.append(record)
+    return result
 
 
 ### *2. 编码、调试时间总体情况统计柱状图:
-### 3. 编码、调试时间个人情况统计柱状图:
-### *4. 学生每题编码、调试的平均时间比例统计、分布:
-###  6. 个人每天编码时间统计:
-
-
 def get_time_total():
-    # student_id: string
-    # question_id: string
-    # code_time: int
-    # debug_time: int
-    # dayid: date
-    # entry1 = {'student_id': student_id_value, 'question_id': question_id_value, `dayid`: int,'code_time': code_time_value, 'debug_time': debug_time_value}
-    # return [entry1, entry2]
     total = []
     for cdt in CodeAndDebugTime.select():
-        entry = {'student_id': cdt.student_id, 'question_id': cdt.question_id,
-                 'dayid':cdt.date,  'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
+        entry = {'student_id': cdt.student_id.student_id, 'question_id': cdt.question_id,
+                 'dayid': cdt.date, 'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
         total.append(entry)
     return total
 
 
+### 3. 编码、调试时间个人情况统计柱状图:
+def get_time_personal():
+    total = []
+    for stu in Student.select():
+        user_data = []
+        for cdt in CodeAndDebugTime.select().where(stu.student_id == CodeAndDebugTime.student_id):
+            entry = {'student_id': cdt.student_id.student_id, 'question_id': cdt.question_id,
+                     'dayid': cdt.date, 'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
+            user_data.append(entry)
+        total.append({'user_data': user_data, 'student_id': stu.student_id})
+    return total
+
+
+### *4. 学生每题编码、调试的平均时间比例统计、分布:
+def get_time_div_total():
+    data = []
+    for qid in QuestionInExam.select():
+        cnt = 0
+        total_debug_time = 0
+        total_code_time = 0
+        for cdt in CodeAndDebugTime.select().where(CodeAndDebugTime.question_id == qid):
+            cnt += 1
+            total_code_time += cdt.code_time
+            total_debug_time += cdt.debug_time
+        if cnt == 0:
+            cnt = 1
+        data.append({'question_id': qid.question_id, 'debug_time': total_debug_time / cnt, 'code_time': total_code_time / cnt})
+    return data
+
+
+###  6. 个人每天编码时间统计:
+
+
+
 ### 5. 整体编码时间分布:
 
-
+# TODO
 def get_work_time():
     # 忽略部分实现细节
     # data 定义格式见1
@@ -53,13 +77,11 @@ def get_work_time():
     pass
 
 
-
-
 ## 拷贝：
 
 ### 7. 个人外来粘贴字符数统计柱状图:
 
-
+# TODO
 def get_paste_length_personal():
     # paste_data: List
     # paste_data = [entry1, entry2……]
@@ -74,6 +96,7 @@ def get_paste_length_personal():
     ### *8. 粘贴内容分类统计柱状图:
 
 
+# TODO
 def get_paste_content_classification():
     # paste_data: List
     # paste_data = [entry1, entry2,……]
@@ -91,7 +114,7 @@ def get_paste_content_classification():
 # ### 9. 平均编码速度分布图:
 
 
-
+# TODO
 def get_coding_speed():
     # speed_data: List
     # speed_data = [entry1, entry2, ……]
@@ -107,7 +130,7 @@ def get_coding_speed():
 ### 10. 题目调试次数统计:
 
 
-
+# TODO
 def get_debug_personal():
     # data定义见1
     # student_id: string
@@ -119,7 +142,7 @@ def get_debug_personal():
 ### \*11. 学生整体调试次数分布统计:
 
 
-
+# TODO
 def get_debug_total():
     # debug_count_data: List
     # debug_count_data = [entry1, entry2, ……]
@@ -135,7 +158,7 @@ def get_debug_total():
 ### *12. 学生得分分布柱状图:
 
 
-
+# TODO
 def get_score():
     # score_data: List
     # score_data = [entry1, entry2, ……]
@@ -149,7 +172,7 @@ def get_score():
 ### *13. 学生题目得分分布柱状图:
 
 
-
+# TODO
 def get_problem_score(eid=EID):
     '''
     # score_data: List
@@ -167,6 +190,8 @@ def get_problem_score(eid=EID):
             res.append({'student_id': sid, 'question_id': pid, 'score': s})
 
     return res
+
+
 # TODO 问一下第13个方法是不是要重写一下
 
 ## 编译：
@@ -174,7 +199,7 @@ def get_problem_score(eid=EID):
 ### *14. 编译错误出现的次数分布:
 
 
-
+# TODO
 def get_build_error_count():
     # build_error_data: List
     # build_error_data = [entry1, entry2, ……]
@@ -189,7 +214,7 @@ def get_build_error_count():
 ### *15. 编译失败的次数分布:
 
 
-
+# TODO
 def get_build_failed_count():
     # build_data: List
     # build_data = [entry1, entry2, ……]
@@ -202,6 +227,7 @@ def get_build_failed_count():
     pass
 
 
+# TODO
 ### *16. 每题编码时间过少的人:
 def get_time_less():
     # user_list: List
@@ -216,7 +242,6 @@ def get_time_less():
 
 
 def get_all_user_id():
-
     pass
 
 
@@ -225,6 +250,7 @@ def get_all_day_id():
 
 
 question_id_set = None
+
 
 def get_all_problem_id():
     global question_id_set
@@ -238,4 +264,5 @@ def get_all_problem_id():
 if __name__ == '__main__':
     os.chdir('../../')
     # print(get__problem_score())
-    print(get_all_problem_id())
+    print(get_time_div_total())
+    # print(datetime.datetime.now().date())

@@ -4,8 +4,8 @@ import MySQLdb
 class MysqlConnector:
     # TODO charset
     db = MySQLdb.connect(host="localhost",  # your host, usually localhost
-                         user="cpp_test",  # your username
-                         passwd="cpp_test",  # your password
+                         user="root",  # your username
+                         passwd="",  # your password
                          db="cpp_test_server")  # name of the data base
     cur = db.cursor()
 
