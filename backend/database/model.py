@@ -78,7 +78,7 @@ class CodeAndDebugTime(BaseModel):
     debug_time = IntegerField()
     date = DateField()
     class Meta:
-        primary_key = CompositeKey('student_id', 'question_id')
+        primary_key = CompositeKey('student_id', 'question_id', 'date')
 
 
 # 7.个人外来粘贴字符数统计柱状图
@@ -104,7 +104,7 @@ class Speed(BaseModel):
 # 11.学生整体调试次数分布统计
 class Debug(BaseModel):
     student_id = ForeignKeyField(Student, primary_key=True)
-    debug_count = IntegerField(default=1)
+    debug_count = IntegerField(default=0)
 
 
 
@@ -121,8 +121,8 @@ class BuildError(BaseModel):
 class BuildResult(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = IntegerField()
-    failed_count = IntegerField()
-    success_count = IntegerField()
+    failed_count = IntegerField(default=0)
+    success_count = IntegerField(default=0)
     class Meta:
         primary_key = CompositeKey('student_id', 'question_id')
 
@@ -218,9 +218,10 @@ def insert_test():
 def create_tables():
     db.connect()
     db.create_tables([Student, Exam, StudentInExam, QuestionInExam, StudentQuestionResult, Operation, CodeAndDebugTime,
-                      Paste, Speed, Debug, BuildError, BuildFailure])
+                      Paste, Speed, Debug, BuildError, BuildResult])
 
 
-# create_tables()
-db.create_table(BuildError)
-insert_test()
+if __name__ == '__main__':
+    # create_tables()
+    db.create_table(BuildError)
+    insert_test()
