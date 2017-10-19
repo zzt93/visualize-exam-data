@@ -74,10 +74,8 @@ class Operation(BaseModel):
 class CodeAndDebugTime(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = IntegerField()
-    code_time_start = DateTimeField()
-    code_time_end = DateTimeField()
-    debug_time_start = DateTimeField()
-    debug_time_end = DateTimeField()
+    code_time = IntegerField()
+    debug_time = IntegerField()
     date = DateField()
     class Meta:
         primary_key = CompositeKey('student_id', 'question_id', 'date')
