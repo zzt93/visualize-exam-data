@@ -51,8 +51,8 @@ class StudentQuestionResult(BaseModel):
 class TestCase(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = ForeignKeyField(QuestionInExam)
-    ac_list = CharField()
-    wrong_list = CharField()
+    ac_list = CharField(default='')
+    wrong_list = CharField(default='')
     test_id = PrimaryKeyField()
 
 

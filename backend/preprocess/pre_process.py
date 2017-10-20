@@ -182,15 +182,18 @@ def store_to_db(eid):
     score, test_cases = merge_log_score(eid, file_to_id)
     for student_id, value in score.items():
         for question_id, s in value.items():
-            result, created = StudentQuestionResult.get_or_create(student_id=student_id, question_id=question_id)
-            result.score = s
-            result.save()
+            result, created = StudentQuestionResult.get_or_create(student_id=student_id, question_id=question_id,
+                                                                  defaults={'score': s})
+
     #
     # store test cases
     for student_id, question_dict in test_cases.items():
         for question_id, dict_list in question_dict.items():
             for ac_dict in dict_list:
-                TestCase.get_or_create(student_id=student_id, question_id=question_id, ac_list=ac_dict['ac'], wrong_list=ac_dict['wrong'])
+                test_c, created = TestCase.get_or_create(student_id=student_id, question_id=question_id,
+                                                         defaults={'ac_list': ac_dict['ac'],
+                                                                   'wrong_list': ac_dict['wrong']})
+
     #
     # store other monitor info
     monitor = merge_monitor_info(eid, file_to_id)
@@ -227,7 +230,6 @@ def store_to_db(eid):
                     question_id = extract_question_id_from_path(ntpath.split(monitor_dict['fullpath'])[0])
                     if op_type >= 5 and op_type <= 7:
                         code_len += abs(len(monitor_dict['textfrom']) - len(monitor_dict['textto']))
-
 
                 # store code time
                 if question_id == INVALID:
@@ -290,8 +292,6 @@ def store_to_db(eid):
                         build_error.save()
                 build.save()
 
-
-
         code_time_sum = 0
         for question_id, d in code_time.items():
             for day, info in d.items():
@@ -303,7 +303,7 @@ def store_to_db(eid):
 
         if code_time_sum == 0:
             continue
-        Speed.create(student_id=sid, exam_id=eid, speed=code_len/code_time_sum)
+        Speed.get_or_create(student_id=sid, exam_id=eid, defaults={'speed': code_len / code_time_sum})
 
 
 def extract_question_id_from_path(filename):
