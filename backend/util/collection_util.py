@@ -20,7 +20,7 @@ def unique_dict(original):
                 break
 
 
-def sort_by_time(dict, f):
+def sort_dict(dict, f):
     return collections.OrderedDict(sorted(dict.items(), key=f))
 
 

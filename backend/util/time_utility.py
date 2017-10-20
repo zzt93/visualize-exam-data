@@ -16,8 +16,9 @@ def string_to_datetime(s):
                 return datetime.datetime.strptime(s, '%Y/%m/%d %A %H:%M:%S')
             except ValueError:
                 # 2017/9/27/周三 22:34:49
-                locale.setlocale(locale.LC_ALL, 'zh_CN.UTF-8')
-                return datetime.datetime.strptime(s, '%Y/%m/%d/%a %H:%M:%S')
+                ss = s.split(' ')
+                new_date = ss[0][:-3] + ' ' + ss[1]
+                return datetime.datetime.strptime(new_date, '%Y/%m/%d/%a %H:%M:%S')
 
 
 def timedelta_milliseconds(td):

@@ -291,16 +291,8 @@ def get_all_day_id():
     pass
 
 
-question_id_set = None
-
-
 def get_all_problem_id():
-    global question_id_set
-    if question_id_set is None:
-        mysql = MysqlConnector()
-        question_id_set = mysql.get_question_set(EID)
-        mysql.close()
-    return question_id_set
+    pass
 
 
 if __name__ == '__main__':

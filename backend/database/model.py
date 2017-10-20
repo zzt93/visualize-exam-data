@@ -41,7 +41,7 @@ class QuestionInExam(BaseModel):
 # 16.每题编码时间过少的人
 class StudentQuestionResult(BaseModel):
     student_id = ForeignKeyField(Student)
-    question_id = IntegerField()
+    question_id = ForeignKeyField(QuestionInExam)
     used_time = IntegerField()
     score = FloatField(default=0)
     class Meta:
@@ -73,7 +73,7 @@ class Operation(BaseModel):
 # 6.个人每天编码时间统计
 class CodeAndDebugTime(BaseModel):
     student_id = ForeignKeyField(Student)
-    question_id = IntegerField()
+    question_id = ForeignKeyField(QuestionInExam)
     code_time = IntegerField()
     debug_time = IntegerField()
     date = DateField()
@@ -85,7 +85,7 @@ class CodeAndDebugTime(BaseModel):
 # 8.粘贴内容分类统计柱状图
 class Paste(BaseModel):
     student_id = ForeignKeyField(Student)
-    question_id = IntegerField()
+    question_id = ForeignKeyField(QuestionInExam)
     paste_content = CharField(default='')
     paste_type = IntegerField(default=0)
     happen_time = DateTimeField()
@@ -122,7 +122,7 @@ class BuildError(BaseModel):
 # 15.编译失败的次数分布
 class BuildResult(BaseModel):
     student_id = ForeignKeyField(Student)
-    question_id = IntegerField()
+    question_id = ForeignKeyField(QuestionInExam)
     failed_count = IntegerField(default=0)
     success_count = IntegerField(default=0)
     class Meta:
@@ -206,16 +206,6 @@ def insert_test():
     pass
 
 
-#
-#
-# # 15.编译失败的次数分布
-# class BuildFailure(BaseModel):
-#     student_id = ForeignKeyField(Student)
-#     question_id = IntegerField()
-#     failed_count = IntegerField()
-#     success_count = IntegerField()
-#     class Meta:
-#         primary_key = CompositeKey('student_id', 'question_id')
 
 def create_tables():
     db.connect()
