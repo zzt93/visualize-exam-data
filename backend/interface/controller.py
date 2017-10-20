@@ -19,7 +19,8 @@ def get_process_personal():
             else:
                 day_op[day] = [entry]
             for key in day_op:
-                record = {'data': day_op[key], 'student_id': stu.student_id, 'dayid': key}
+                record = {'data': day_op[key], 'student_id': stu.student_id, 'dayid': str(key)}
+                record.sort(key = lambda x: x['dayid'])
                 result.append(record)
     return result
 
@@ -29,8 +30,9 @@ def get_time_total():
     total = []
     for cdt in CodeAndDebugTime.select():
         entry = {'student_id': cdt.student_id.student_id, 'question_id': cdt.question_id,
-                 'dayid': cdt.date, 'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
+                 'dayid': str(cdt.date), 'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
         total.append(entry)
+    total.sort(key = lambda x: x['dayid'])
     return total
 
 
@@ -41,8 +43,9 @@ def get_time_personal():
         user_data = []
         for cdt in CodeAndDebugTime.select().where(stu.student_id == CodeAndDebugTime.student_id):
             entry = {'student_id': cdt.student_id.student_id, 'question_id': cdt.question_id,
-                     'dayid': cdt.date, 'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
+                     'dayid': str(cdt.date), 'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
             user_data.append(entry)
+            user_data.sort(key = lambda x: x['dayid'])
         total.append({'user_data': user_data, 'student_id': stu.student_id})
     return total
 
@@ -158,15 +161,12 @@ def get_coding_speed():
 ## 调试：
 
 ### 10. 题目调试次数统计:
-
-
-# TODO 这里少一个属性，Debug里没有question_id
 def get_debug_personal():
-    # data定义见1
-    # student_id: string
-    # question_id: string
-    # return {'data': data_value, 'student_id': student_id_value, 'question_id': question_id_value}
     result = []
+    for de in Debug.select():
+        debug_data = {'student_id': de.student_id.student_id, 'problem_id': de.question_id.question_id, 'debug_count': de.debug_count}
+        entry = {'debug_data': debug_data, 'problem_id': de.question_id.question_id, 'question_id': de.question_id.question_id}
+        result.append(entry)
     return result
 
 
@@ -302,9 +302,11 @@ def get_all_problem_id():
         res.append(ques.question_id)
     return res
 
+def date_cmp(x, y):
+    return x['dayid'] < y['dayid']
 
 if __name__ == '__main__':
     os.chdir('../../')
     # print(get__problem_score())
-    print(get_work_time())
+    print(get_time_total())
     # print(datetime.datetime.now().date())
