@@ -190,10 +190,11 @@ def insert_test():
     #         s = random.random() * 100
     #         Speed.create(student_id = sid, speed = s, exam_id = eid)
     #
-    # ######Debug
+    ######Debug
     # for sid in range(1, 200):
     #     dc = random.randint(0, 100)
-    #     Debug.create(student_id = sid, debug_count = dc)
+    #     qid = random.randint(1, 10)
+    #     Debug.create(student_id = sid, debug_count = dc, question_id = qid)
     #
     # #####BuildError
     # for qid in range(1, 15):
@@ -218,5 +219,7 @@ def create_tables():
 
 
 if __name__ == '__main__':
-    create_tables()
+    # create_tables()
+    # db.create_table(Debug)
     # insert_test()
+    pass
