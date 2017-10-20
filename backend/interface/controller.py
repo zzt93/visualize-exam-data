@@ -82,6 +82,7 @@ def get_work_time_personal():
                 result.append(record)
     return result
 
+
 ### 5. 整体编码时间分布:
 def get_work_time():
     result = []
@@ -127,12 +128,13 @@ def get_paste_content_classification():
     # return [{'paste_data': paste_data, 'student_id': student_id_value}]
     pasta_data = []
     source = Paste.raw(
-        'select student_id_id, question_id, paste_type, count(*) as cnt from paste GROUP BY student_id_id, question_id, paste_type')
+        'SELECT student_id_id, question_id, paste_type, count(*) AS cnt FROM paste GROUP BY student_id_id, question_id, paste_type')
     for i in source:
         paste_data = {'student_id': i.student_id.student_id, 'question_id': i.question_id,
                       'paste_class': i.paste_type, 'count': i.cnt}
         pasta_data.append({'paste_data': paste_data, 'student_id': i.student_id.student_id})
     return pasta_data
+
 
 ## 插入： speed的单位是字符 / 分钟
 
@@ -284,7 +286,10 @@ def get_time_less():
 
 
 def get_all_user_id():
-    pass
+    res = []
+    for stu in Student.select():
+        res.append(stu.student_id)
+    return res
 
 
 def get_all_day_id():
@@ -292,7 +297,10 @@ def get_all_day_id():
 
 
 def get_all_problem_id():
-    pass
+    res = []
+    for ques in QuestionInExam.select().where(QuestionInExam.exam_id == EID):
+        res.append(ques.question_id)
+    return res
 
 
 if __name__ == '__main__':

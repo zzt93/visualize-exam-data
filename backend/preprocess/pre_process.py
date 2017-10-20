@@ -188,7 +188,7 @@ def store_to_db(eid):
     #         for ac_dict in dict_list:
     #             TestCase.create(student_id=student_id, question_id=question_id, ac_list=ac_dict['ac'], wrong_list=ac_dict['wrong'])
     #
-    # store other monitor inof
+    # store other monitor info
     monitor = merge_monitor_info(eid, file_to_id)
     for sid, info_list in monitor.items():
         debug_time = {}
@@ -207,6 +207,8 @@ def store_to_db(eid):
                     # {'id': 41, 'time': datetime.datetime(2017, 9, 28, 10, 27, 54), 'operator': '3', 'name': 'Main.cpp', 'path': 'c:\\Users\\43796\\documents\\visual studio 2013\\Projects\\Exam36\\Q63\\', 'content': 'cin >> x;\r\n\t\t\tfor (int i = 0; i < n; i++)\r\n\t\t\t\ta[i] += x;\r\n\t\t\tbreak;', 'happentime': 636421912749274277, 'project': 'Q63'}
                     # {'id': 42, 'time': datetime.datetime(2017, 9, 28, 10, 28, 1), 'operator': '4', 'name': 'Main.cpp', 'path': 'c:\\Users\\43796\\documents\\visual studio 2013\\Projects\\Exam36\\Q63\\', 'content': "case 's':\r\n\t\t\tcin >> x;\r\n\t\t\tfor (int i = 0; i < n; i++)\r\n\t\t\t\ta[i] -= x;\r\n\t\t\tbreak;", 'happentime': 636421912814745993, 'project': 'Q63'}
                     question_id = extract_question_id_from_path(monitor_dict['path'])
+                    if question_id == INVALID:
+                        continue
                     if op_type == 3:  # paste
                         paste, created = Paste.get_or_create(student_id=sid, question_id=question_id,
                                                              happen_time=monitor_dict['time'])
@@ -260,6 +262,7 @@ def store_to_db(eid):
                     debug_time_model, created = CodeAndDebugTime.get_or_create(student_id=sid, question_id=question_id,
                                                                                date=monitor_dict['time'].date())
                     debug_time_model.debug_time = debug_time_model.debug_time + gap
+                    debug_time_model.save()
                 elif monitor_dict['debug_action'] == 'start':
                     debug_time[question_id] = monitor_dict['time']
 
@@ -277,8 +280,11 @@ def store_to_db(eid):
                 else:
                     build.failed_count = build.failed_count + 1
                     for e in errors:
-                        build, created = BuildError.get_or_create(question_id=question_id, error_code=e['code'])
-                        build.failed_count = build.failed_count + 1
+                        build_error, created = BuildError.get_or_create(question_id=question_id, error_code=e['code'])
+                        build_error.count = build_error.count + 1
+                        build_error.save()
+                build.save()
+
 
         code_time_sum = 0
         for question_id, d in code_time.items():
@@ -286,9 +292,12 @@ def store_to_db(eid):
                 code_time_model, created = CodeAndDebugTime.get_or_create(student_id=sid, question_id=question_id,
                                                                           date=day)
                 code_time_model.code_time = info['count']
+                code_time_model.save()
                 code_time_sum += info['count']
 
-        Speed(student_id=sid, exam_id=eid, speed=code_len/code_time_sum).create()
+        if code_time_sum == 0:
+            continue
+        Speed.create(student_id=sid, exam_id=eid, speed=code_len/code_time_sum)
 
 
 def extract_question_id_from_path(filename):
