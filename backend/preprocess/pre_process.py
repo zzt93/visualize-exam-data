@@ -1,3 +1,4 @@
+import ntpath
 import os
 from zipfile import ZipFile
 
@@ -179,15 +180,15 @@ def store_to_db(eid):
     #
     # store score
     score, test_cases = merge_log_score(eid, file_to_id)
-    # for student_id, value in score.items():
-    #     for question_id, s in value.items():
-    #         StudentQuestionResult.create(student_id=student_id, question_id=question_id, score=score)
+    for student_id, value in score.items():
+        for question_id, s in value.items():
+            StudentQuestionResult.get_or_create(student_id=student_id, question_id=question_id, score=s)
     #
-    # # store test cases
-    # for student_id, question_dict in test_cases:
-    #     for question_id, dict_list in question_dict:
-    #         for ac_dict in dict_list:
-    #             TestCase.create(student_id=student_id, question_id=question_id, ac_list=ac_dict['ac'], wrong_list=ac_dict['wrong'])
+    # store test cases
+    for student_id, question_dict in test_cases.items():
+        for question_id, dict_list in question_dict.items():
+            for ac_dict in dict_list:
+                TestCase.get_or_create(student_id=student_id, question_id=question_id, ac_list=ac_dict['ac'], wrong_list=ac_dict['wrong'])
     #
     # store other monitor info
     monitor = merge_monitor_info(eid, file_to_id)
@@ -221,7 +222,7 @@ def store_to_db(eid):
                     # {'id': 1759, 'time': datetime.datetime(2017, 9, 28, 16, 35, 48), 'operator': '6', 'fullpath': 'c:\\Users\\43796\\documents\\visual studio 2013\\Projects\\Exam36\\Q69\\Main.cpp', 'textfrom': 'isp\r\n', 'textto': 'isPalindrome', 'line': 18, 'lineoffset': 7, 'happentime': 636422133483868599, 'project': 'Q69'}
                     # {'id': 1717, 'time': datetime.datetime(2017, 9, 28, 16, 33, 20), 'operator': '7', 'fullpath': 'c:\\Users\\43796\\documents\\visual studio 2013\\Projects\\Exam36\\Q69\\Main.cpp', 'textfrom': 'break', 'textto': '', 'line': 8, 'lineoffset': 3, 'happentime': 636422132007669805, 'project': 'Q69'}
                     # {'id': 1612, 'time': datetime.datetime(2017, 9, 28, 16, 4, 45), 'operator': '8', 'fullpath': 'c:\\Users\\43796\\documents\\visual studio 2013\\Projects\\Exam36\\Q68\\Main.cpp', 'textfrom': '', 'textto': '', 'line': 22, 'lineoffset': 21, 'happentime': 636422114855703774, 'project': 'Q68'}
-                    question_id = extract_question_id_from_path(monitor_dict['fullpath'])
+                    question_id = extract_question_id_from_path(ntpath.split(monitor_dict['fullpath'])[0])
                     if op_type >= 5 and op_type <= 7:
                         code_len += abs(len(monitor_dict['textfrom']) - len(monitor_dict['textto']))
 
@@ -233,8 +234,8 @@ def store_to_db(eid):
                 if question_id in code_time:
                     if code_date in code_time[question_id]:
                         assert 'last' in code_time[question_id][code_date]
-                        code_time[question_id][code_date]['last'] = monitor_dict['time']
                         gap = (monitor_dict['time'] - code_time[question_id][code_date]['last']).total_seconds()
+                        code_time[question_id][code_date]['last'] = monitor_dict['time']
                         if gap < FIVE_MIN:
                             code_time[question_id][code_date]['count'] = code_time[question_id][code_date][
                                                                              'count'] + gap
@@ -286,6 +287,7 @@ def store_to_db(eid):
                         build_error.count = build_error.count + 1
                         build_error.save()
                 build.save()
+
 
 
         code_time_sum = 0

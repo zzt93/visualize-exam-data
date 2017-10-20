@@ -42,7 +42,7 @@ class QuestionInExam(BaseModel):
 class StudentQuestionResult(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = ForeignKeyField(QuestionInExam)
-    used_time = IntegerField()
+    used_time = IntegerField(default=0)
     score = FloatField(default=0)
     class Meta:
         primary_key = CompositeKey('question_id', 'student_id')
@@ -220,6 +220,6 @@ def create_tables():
 
 if __name__ == '__main__':
     # create_tables()
-    # db.create_table(Debug)
+    db.create_table(StudentQuestionResult)
     # insert_test()
     pass
