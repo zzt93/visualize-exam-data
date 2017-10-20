@@ -21,7 +21,7 @@ class BaseModel(Model):
 
 
 class Student(BaseModel):
-    student_id = CharField(primary_key=True, unique=True)
+    student_id = CharField(primary_key=True, unique=True, max_length=15)
 
 
 class Exam(BaseModel):
@@ -60,12 +60,12 @@ class TestCase(BaseModel):
 # 5.整体编码时间分布
 # 10.题目调试次数统计
 class Operation(BaseModel):
+    operation_id = PrimaryKeyField()
     op_type = IntegerField()
     op_happen_time = TimestampField()
     op_last_time = IntegerField(default=0)
     student_id = ForeignKeyField(Student)
-    class Meta:
-        primary_key = CompositeKey('op_happen_time', 'student_id')
+
 
 # 2.编码、调试时间总体情况统计柱状图
 # 3.编码、调试时间个人情况统计柱状图
@@ -86,8 +86,8 @@ class CodeAndDebugTime(BaseModel):
 class Paste(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = IntegerField()
-    paste_content = CharField()
-    paste_type = IntegerField()
+    paste_content = CharField(default='')
+    paste_type = IntegerField(default=0)
     happen_time = DateTimeField()
     class Meta:
         primary_key = CompositeKey('student_id', 'question_id', 'paste_type', 'happen_time')
@@ -103,16 +103,18 @@ class Speed(BaseModel):
 
 # 11.学生整体调试次数分布统计
 class Debug(BaseModel):
-    student_id = ForeignKeyField(Student, primary_key=True)
+    student_id = ForeignKeyField(Student)
     debug_count = IntegerField(default=0)
-
+    exam_id = ForeignKeyField(Exam)
+    class Meta:
+        primary_key = CompositeKey('student_id', 'exam_id')
 
 
 # 14.编译错误出现的次数分布
 class BuildError(BaseModel):
     question_id = ForeignKeyField(QuestionInExam)
-    error_code = CharField()
-    count = IntegerField()
+    error_code = CharField(max_length=20)
+    count = IntegerField(default=0)
     class Meta:
         primary_key = CompositeKey('question_id', 'error_code')
 
@@ -218,10 +220,9 @@ def insert_test():
 def create_tables():
     db.connect()
     db.create_tables([Student, Exam, StudentInExam, QuestionInExam, StudentQuestionResult, Operation, CodeAndDebugTime,
-                      Paste, Speed, Debug, BuildError, BuildResult])
+                      Paste, Speed, Debug, BuildError, BuildResult, TestCase], safe=True)
 
 
 if __name__ == '__main__':
-    # create_tables()
-    db.create_table(TestCase)
+    create_tables()
     # insert_test()
