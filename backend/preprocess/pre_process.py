@@ -182,7 +182,9 @@ def store_to_db(eid):
     score, test_cases = merge_log_score(eid, file_to_id)
     for student_id, value in score.items():
         for question_id, s in value.items():
-            StudentQuestionResult.get_or_create(student_id=student_id, question_id=question_id, score=s)
+            result, created = StudentQuestionResult.get_or_create(student_id=student_id, question_id=question_id)
+            result.score = s
+            result.save()
     #
     # store test cases
     for student_id, question_dict in test_cases.items():
