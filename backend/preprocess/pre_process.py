@@ -1,16 +1,15 @@
 import os
-from collections import OrderedDict
 from zipfile import ZipFile
 
 from backend.database.model import *
-from backend.util.collection_util import sort_dict, minus_dict
+from backend.util.collection_util import minus_dict
 from backend.util.config import *
 from backend.util.constant import OperatorType, INVALID
 from backend.util.error_util import error_extraction
 from backend.util.log_data_transform import transform_test_log
 from backend.util.monitor_data_transform import read_data
 from backend.util.mysql_connector import MysqlConnector
-from backend.util.path_util import scan_dir
+from backend.util.path_util import scan_dir, path_leaf
 
 PASTE_TYPE = 123
 
@@ -141,14 +140,16 @@ def file_to_sid(eid):
     return file_to_id, student_list
 
 
-def extract_question_id(s):
+def extract_question_id(project_name):
     try:
-        tmp = int(s[1:])
+        tmp = int(project_name[1:])
     except ValueError:
+        print('project name is invalid: ' + project_name)
         return INVALID
     from backend.interface.controller import get_all_problem_id
     ids = get_all_problem_id()
     if tmp not in ids:
+        print('project name is invalid: ' + project_name)
         return INVALID
     return tmp
 
@@ -228,9 +229,9 @@ def store_to_db(eid):
                 # store code time
                 if question_id == INVALID:
                     continue
-                code_date = monitor_dict['time']
+                code_date = monitor_dict['time'].date()
                 if question_id in code_time:
-                    if code_date in code_time[question_id][code_date]:
+                    if code_date in code_time[question_id]:
                         assert 'last' in code_time[question_id][code_date]
                         code_time[question_id][code_date]['last'] = monitor_dict['time']
                         gap = (monitor_dict['time'] - code_time[question_id][code_date]['last']).total_seconds()
@@ -248,17 +249,18 @@ def store_to_db(eid):
                 # {'id': 33, 'operator': '12', 'time': datetime.datetime(2017, 9, 27, 18, 35, 3), 'debug_target': 'C:\\Users\\89749\\Desktop\\Homework1\\Debug\\Q10.exe'}
 
                 # store debug overview
-                d, created = Debug.get_or_create(student_id=sid, exam_id=eid)
-                d.debug_count = d.debug_count + 1
-                d.save()
-                # store debug time
                 filename = monitor_dict['debug_target']
                 question_id = extract_question_id_from_path(filename)
                 if question_id == INVALID:
                     continue
+
+                d, created = Debug.get_or_create(student_id=sid, question_id=question_id)
+                d.debug_count = d.debug_count + 1
+                d.save()
+                # store debug time
                 if 'debug_action' not in monitor_dict or monitor_dict['debug_action'] == 'dbgEventReasonEndProgram':
                     assert question_id in debug_time
-                    gap = monitor_dict['time'] - debug_time[question_id]
+                    gap = (monitor_dict['time'] - debug_time[question_id]).total_seconds()
                     debug_time_model, created = CodeAndDebugTime.get_or_create(student_id=sid, question_id=question_id,
                                                                                date=monitor_dict['time'].date())
                     debug_time_model.debug_time = debug_time_model.debug_time + gap
@@ -301,9 +303,9 @@ def store_to_db(eid):
 
 
 def extract_question_id_from_path(filename):
-    (filepath, tempfilename) = os.path.split(filename)
-    (shortname, extension) = os.path.splitext(tempfilename)
-    question_id = extract_question_id(shortname)
+    temp = path_leaf(filename)
+    (short_name, extension) = os.path.splitext(temp)
+    question_id = extract_question_id(short_name)
     return question_id
 
 

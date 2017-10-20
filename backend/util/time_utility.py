@@ -18,7 +18,13 @@ def string_to_datetime(s):
                 # 2017/9/27/周三 22:34:49
                 ss = s.split(' ')
                 new_date = ss[0][:-3] + ' ' + ss[1]
-                return datetime.datetime.strptime(new_date, '%Y/%m/%d/%a %H:%M:%S')
+                try:
+                    return datetime.datetime.strptime(new_date, '%Y/%m/%d/%a %H:%M:%S')
+                except ValueError:
+                    # 2017/10/2 星期一 下午 20:04:08
+                    ss = s.split(' ')
+                    new_date = ss[0] + ' ' + ss[3]
+                    return datetime.datetime.strptime(new_date, '%Y/%m/%d %H:%M:%S')
 
 
 def timedelta_milliseconds(td):

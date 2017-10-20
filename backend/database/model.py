@@ -71,12 +71,11 @@ class Operation(BaseModel):
 # 3.编码、调试时间个人情况统计柱状图
 # 4.学生每题编码、调试的平均时间比例统计、分布
 # 6.个人每天编码时间统计
-# todo test
 class CodeAndDebugTime(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = ForeignKeyField(QuestionInExam)
-    code_time = IntegerField()
-    debug_time = IntegerField()
+    code_time = IntegerField(default=0)
+    debug_time = IntegerField(default=0)
     date = DateField()
     class Meta:
         primary_key = CompositeKey('student_id', 'question_id', 'date')
@@ -84,7 +83,6 @@ class CodeAndDebugTime(BaseModel):
 
 # 7.个人外来粘贴字符数统计柱状图
 # 8.粘贴内容分类统计柱状图
-# todo test
 class Paste(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = ForeignKeyField(QuestionInExam)

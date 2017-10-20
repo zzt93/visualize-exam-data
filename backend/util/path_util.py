@@ -1,3 +1,5 @@
+import ntpath
+
 import scandir
 
 
@@ -21,3 +23,8 @@ def scan_dir(dir_path, pattern=None, dir_level=-1):
                         yield entry.path
 
     yield from inner_scan_project(dir_path)
+
+def path_leaf(path):
+    head, tail = ntpath.split(path)
+    return tail or ntpath.basename(head)
+
