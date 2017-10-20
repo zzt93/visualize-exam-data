@@ -71,6 +71,7 @@ class Operation(BaseModel):
 # 3.编码、调试时间个人情况统计柱状图
 # 4.学生每题编码、调试的平均时间比例统计、分布
 # 6.个人每天编码时间统计
+# todo test
 class CodeAndDebugTime(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = ForeignKeyField(QuestionInExam)
@@ -83,6 +84,7 @@ class CodeAndDebugTime(BaseModel):
 
 # 7.个人外来粘贴字符数统计柱状图
 # 8.粘贴内容分类统计柱状图
+# todo test
 class Paste(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = ForeignKeyField(QuestionInExam)
@@ -94,6 +96,7 @@ class Paste(BaseModel):
 
 
 # 9.平均编码速度分布图
+# todo test
 class Speed(BaseModel):
     student_id = ForeignKeyField(Student)
     speed = FloatField(help_text='speed 的单位是字符/分钟')
@@ -105,9 +108,9 @@ class Speed(BaseModel):
 class Debug(BaseModel):
     student_id = ForeignKeyField(Student)
     debug_count = IntegerField(default=0)
-    exam_id = ForeignKeyField(Exam)
+    question_id = ForeignKeyField(QuestionInExam)
     class Meta:
-        primary_key = CompositeKey('student_id', 'exam_id')
+        primary_key = CompositeKey('student_id', 'question_id')
 
 
 # 14.编译错误出现的次数分布
