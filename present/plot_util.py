@@ -4,7 +4,7 @@ import re
 import os
 
 
-def save_as_png(figure, filepath, filename):
+def save_as_png(figure, filepath, image_filename):
     """
     将图表保存为.png格式
     :param figure:list
@@ -14,10 +14,10 @@ def save_as_png(figure, filepath, filename):
     if not os.path.exists(filepath):
         os.mkdir(filepath)
     py.sign_in('Panjks-', 't59Jl2ktBmwycqKAX8uQ')
-    py.image.save_as(figure, filename=filepath+filename)
+    py.image.save_as(figure, filename=filepath+image_filename)
 
 
-def save_as_html(figure, filepath, filename):
+def save_as_html(figure, filepath, html_filename):
     """
     将图表保存为.html格式
     :param figure: list
@@ -26,7 +26,7 @@ def save_as_html(figure, filepath, filename):
     """
     if not os.path.exists(filepath):
         os.mkdir(filepath)
-    offline.plot(figure, auto_open=False, filename=filepath+filename)
+    offline.plot(figure, auto_open=False, filename=filepath+html_filename)
 
 
 def save_as_txt(content, filepath, txt_filename):
