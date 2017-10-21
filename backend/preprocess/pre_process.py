@@ -181,20 +181,18 @@ def store_to_db(eid):
         StudentInExam.get_or_create(student_id=sid, exam_id=eid)
     #
     # store score
-    with db.atomic():
-        score, test_cases = merge_log_score(eid, file_to_id)
-        for student_id, value in score.items():
-            for question_id, s in value.items():
-                result, created = StudentQuestionResult.get_or_create(student_id=student_id, question_id=question_id,
+    score, test_cases = merge_log_score(eid, file_to_id)
+    for student_id, value in score.items():
+        for question_id, s in value.items():
+            result, created = StudentQuestionResult.get_or_create(student_id=student_id, question_id=question_id,
                                                                   defaults={'score': s})
 
     #
     # store test cases
-    with db.atomic():
-        for student_id, question_dict in test_cases.items():
-            for question_id, dict_list in question_dict.items():
-                for ac_dict in dict_list:
-                    test_c, created = TestCase.get_or_create(student_id=student_id, question_id=question_id,
+    for student_id, question_dict in test_cases.items():
+        for question_id, dict_list in question_dict.items():
+            for ac_dict in dict_list:
+                test_c, created = TestCase.get_or_create(student_id=student_id, question_id=question_id,
                                                          defaults={'ac_list': ac_dict['ac'],
                                                                    'wrong_list': ac_dict['wrong']})
 
