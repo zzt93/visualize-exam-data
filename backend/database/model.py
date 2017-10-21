@@ -4,7 +4,7 @@ import time
 import datetime
 import string
 
-db = MySQLDatabase('visualize_exam', user='root', charset='utf8mb4')
+db = MySQLDatabase('visualize_exam', user='root', charset='utf8mb4', autocommit=False)
 
 def before_request_handler():
     db.connect()
@@ -212,14 +212,14 @@ def insert_test():
 
 
 
-def create_tables():
+def create_tables_if_not_exists():
     db.connect()
     db.create_tables([Student, Exam, StudentInExam, QuestionInExam, StudentQuestionResult, Operation, CodeAndDebugTime,
                       Paste, Speed, Debug, BuildError, BuildResult, TestCase], safe=True)
 
 
 if __name__ == '__main__':
-    # create_tables()
-    db.create_table(StudentQuestionResult)
+    create_tables_if_not_exists()
+    # db.create_table(StudentQuestionResult)
     # insert_test()
     pass
