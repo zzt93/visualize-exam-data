@@ -20,7 +20,7 @@ def get_process_personal():
                 day_op[day] = [entry]
             for key in day_op:
                 record = {'data': day_op[key], 'student_id': stu.student_id, 'dayid': str(key)}
-                record.sort(key = lambda x: x['dayid'])
+                record.sort(key=lambda x: x['dayid'])
                 result.append(record)
     return result
 
@@ -32,7 +32,7 @@ def get_time_total():
         entry = {'student_id': cdt.student_id.student_id, 'question_id': cdt.question_id,
                  'dayid': str(cdt.date), 'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
         total.append(entry)
-    total.sort(key = lambda x: x['dayid'])
+    total.sort(key=lambda x: x['dayid'])
     return total
 
 
@@ -45,7 +45,7 @@ def get_time_personal():
             entry = {'student_id': cdt.student_id.student_id, 'question_id': cdt.question_id,
                      'dayid': str(cdt.date), 'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
             user_data.append(entry)
-            user_data.sort(key = lambda x: x['dayid'])
+            user_data.sort(key=lambda x: x['dayid'])
         total.append({'user_data': user_data, 'student_id': stu.student_id})
     return total
 
@@ -164,8 +164,10 @@ def get_coding_speed():
 def get_debug_personal():
     result = []
     for de in Debug.select():
-        debug_data = {'student_id': de.student_id.student_id, 'problem_id': de.question_id.question_id, 'debug_count': de.debug_count}
-        entry = {'debug_data': debug_data, 'problem_id': de.question_id.question_id, 'question_id': de.question_id.question_id}
+        debug_data = {'student_id': de.student_id.student_id, 'problem_id': de.question_id.question_id,
+                      'debug_count': de.debug_count}
+        entry = {'debug_data': debug_data, 'problem_id': de.question_id.question_id,
+                 'question_id': de.question_id.question_id}
         result.append(entry)
     return result
 
@@ -296,14 +298,21 @@ def get_all_day_id():
     pass
 
 
+all_problem_id = None
+
+
 def get_all_problem_id():
-    res = []
-    for ques in QuestionInExam.select().where(QuestionInExam.exam_id == EID):
-        res.append(ques.question_id)
-    return res
+    global all_problem_id
+    if all_problem_id is None:
+        all_problem_id = []
+        for ques in QuestionInExam.select().where(QuestionInExam.exam_id == EID):
+            all_problem_id.append(ques.question_id)
+    return all_problem_id
+
 
 def date_cmp(x, y):
     return x['dayid'] < y['dayid']
+
 
 if __name__ == '__main__':
     os.chdir('../../')

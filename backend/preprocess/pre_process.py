@@ -2,6 +2,8 @@ import ntpath
 import os
 from zipfile import ZipFile
 
+import re
+
 from backend.database.model import *
 from backend.util.collection_util import minus_dict
 from backend.util.config import *
@@ -12,7 +14,12 @@ from backend.util.monitor_data_transform import read_data
 from backend.util.mysql_connector import MysqlConnector
 from backend.util.path_util import scan_dir, path_leaf
 
-PASTE_TYPE = 123
+PASTE_TYPE_OTHER = 0
+PASTE_TYPE_LONG = 1
+PASTE_TYPE_IF = 2
+PASTE_TYPE_LOOP = 3
+PASTE_TYPE_FUNC = 4
+PASTE_TYPE_TOKEN = 5
 
 FIVE_MIN = 5 * 60
 
@@ -162,6 +169,26 @@ def get_question_set(eid):
     return question_id_set
 
 
+token_pattern = re.compile(r"[\w_]+")
+func_pattern = re.compile(r"[\w_]+\([\w,_]*\)")
+if_pattern = re.compile(r"if\s*\(([^()]|\s)*\)\s*\{(.|\s)*?\}")
+loop_pattern = re.compile(r"(while|for)\s*\(([^()]|\s)*\)\s*\{(.|\s)*?\}")
+
+
+def get_paste_type(content):
+    if len(content) > 200:
+        return PASTE_TYPE_LONG
+    if if_pattern.search(content):
+        return PASTE_TYPE_IF
+    if loop_pattern.search(content):
+        return PASTE_TYPE_LOOP
+    if func_pattern.search(content):
+        return PASTE_TYPE_FUNC
+    if token_pattern.search(content):
+        return PASTE_TYPE_TOKEN
+    return PASTE_TYPE_OTHER
+
+
 def store_to_db(eid):
     # create tables
     create_tables_if_not_exists()
@@ -222,7 +249,7 @@ def store_to_db(eid):
                         paste, created = Paste.get_or_create(student_id=sid, question_id=question_id,
                                                              happen_time=monitor_dict['time'])
                         paste.paste_content = monitor_dict['content']
-                        paste.paste_type = PASTE_TYPE
+                        paste.paste_type = get_paste_type(monitor_dict['content'])
                         paste.save()
                 elif category == 'content':
                     # {'id': 5, 'time': datetime.datetime(2017, 9, 27, 17, 16, 44), 'operator': '5', 'fullpath': 'C:\\Users\\89749\\Desktop\\C++_Homeworks\\Q2\\Q2\\Q2\\main.cpp', 'textfrom': '', 'textto': '<>', 'line': 1, 'lineoffset': 9, 'happentime': 636421294046897697, 'project': 'Q2'}
@@ -318,6 +345,8 @@ def extract_question_id_from_path(filename):
 if __name__ == '__main__':
     os.chdir('../../')
 
+    # print(get_paste_type('if (a == 1) {\n   a = b; }'))
+
     # test monitor info extraction
     # merge_monitor_info(EID)
 
@@ -325,4 +354,4 @@ if __name__ == '__main__':
     # merge_log_score(EID)
 
     # final step
-    store_to_db(EID)
+    # store_to_db(EID)
