@@ -18,10 +18,10 @@ def get_process_personal():
                 day_op[day].append(entry)
             else:
                 day_op[day] = [entry]
-            for key in day_op:
-                record = {'data': day_op[key], 'student_id': stu.student_id, 'dayid': str(key)}
-                record.sort(key=lambda x: x['dayid'])
-                result.append(record)
+        for key in day_op:
+            record = {'data': day_op[key], 'student_id': stu.student_id, 'dayid': str(key)}
+            # record.sort(key=lambda x: x['dayid'])
+            result.append(record)
     return result
 
 
@@ -29,7 +29,7 @@ def get_process_personal():
 def get_time_total():
     total = []
     for cdt in CodeAndDebugTime.select():
-        entry = {'student_id': cdt.student_id.student_id, 'question_id': cdt.question_id,
+        entry = {'student_id': cdt.student_id.student_id, 'question_id': cdt.question_id.question_id,
                  'dayid': str(cdt.date), 'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
         total.append(entry)
     total.sort(key=lambda x: x['dayid'])
@@ -80,9 +80,9 @@ def get_work_time_personal():
                 day_op[day].append(entry)
             else:
                 day_op[day] = [entry]
-            for key in day_op:
-                record = {'data': day_op[key], 'student_id': stu.student_id, 'dayid': key}
-                result.append(record)
+        for key in day_op:
+            record = {'data': day_op[key], 'student_id': stu.student_id, 'dayid': key}
+            result.append(record)
     return result
 
 
@@ -98,9 +98,9 @@ def get_work_time():
                 day_op[day].append(entry)
             else:
                 day_op[day] = [entry]
-            for key in day_op:
-                record = {'data': day_op[key], 'student_id': stu.student_id, 'dayid': key}
-                result.append(record)
+        for key in day_op:
+            record = {'data': day_op[key], 'student_id': stu.student_id, 'dayid': key}
+            result.append(record)
     return result
 
 
@@ -111,7 +111,7 @@ def get_work_time():
 def get_paste_length_personal():
     pasta_data = []
     for p in Paste.select():
-        entry = {'student_id': p.student_id.student_id, 'question_id': p.question_id,
+        entry = {'student_id': p.student_id.student_id, 'question_id': p.question_id.question_id,
                  'paste_content': p.paste_content, 'happen_time': p.happen_time}
         pasta_data.append({'pasta_data': entry, 'student_id': p.student_id.student_id})
     return pasta_data
@@ -131,9 +131,9 @@ def get_paste_content_classification():
     # return [{'paste_data': paste_data, 'student_id': student_id_value}]
     pasta_data = []
     source = Paste.raw(
-        'SELECT student_id_id, question_id, paste_type, count(*) AS cnt FROM paste GROUP BY student_id_id, question_id, paste_type')
+        'SELECT student_id_id, question_id_id, paste_type, count(*) AS cnt FROM paste GROUP BY student_id_id, question_id_id, paste_type')
     for i in source:
-        paste_data = {'student_id': i.student_id.student_id, 'question_id': i.question_id,
+        paste_data = {'student_id': i.student_id.student_id, 'question_id': i.question_id.question_id,
                       'paste_class': i.paste_type, 'count': i.cnt}
         pasta_data.append({'paste_data': paste_data, 'student_id': i.student_id.student_id})
     return pasta_data

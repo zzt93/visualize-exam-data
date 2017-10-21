@@ -7,6 +7,7 @@ import plotly.graph_objs as go
 from plotly import tools
 import plotly.offline as py
 from collections import defaultdict
+import math
 
 def show_process_personal(data: list, userid: str, dayid: int):
     """
@@ -114,28 +115,33 @@ def show_process_personal(data: list, userid: str, dayid: int):
     return fig
 
 
-def show_time_detached(user_data: list, problemid: str=None, title: str= 'coding time'):
+def show_time_detached(user_data: list, problemid: int=None, title: str= 'coding time'):
     """
     统计不同编码、调试时间的人数。可以得到整体与每题的编码时间人数分布。
     横轴为时间段（min），纵轴为人数（个）
     分为总体情况与每题目情况
-    :param user_data: [{'userid':str, 'problemid':str, 'dayid':int, 'code_time':int, 'debug_time':int}]
+    :param user_data: [{'student_id':str, 'question_id':str, 'dayid':int, 'code_time':int, 'debug_time':int}]
     :param title: figure title
     :return:
     """
     df = pd.DataFrame(user_data)
-    df = df.set_index(['problemid'])
+    df = df.set_index(['question_id'])
     if problemid:
-        df = df.loc[problemid]
-    df = df.groupby(['userid'])['code_time', 'debug_time'].sum()
+        df = df.loc[[problemid], :]
+    df = df.groupby(['student_id'])['code_time', 'debug_time'].sum()
     df = df.sort_index()
     max_time = df['code_time'].max()
     max_time2 = df['debug_time'].max()
     if max_time < max_time2:
         max_time = max_time2
 
-    coding_trace = go.Histogram(x=df['code_time'], histnorm='count', name='code time', xbins=dict(start=0, end=max_time, size=10))
-    debug_trace = go.Histogram(x=df['debug_time'], histnorm='count', name='debug time', xbins=dict(start=0, end=max_time, size=10))
+    t_size = 50
+    if max_time > 5000:
+        t_size = max_time/100
+    t_size = (int((t_size-1)/50)+1)*50
+
+    coding_trace = go.Histogram(x=df['code_time'], histnorm='count', name='code time', xbins=dict(start=0, end=max_time, size=t_size))
+    debug_trace = go.Histogram(x=df['debug_time'], histnorm='count', name='debug time', xbins=dict(start=0, end=max_time, size=t_size))
     layout = go.Layout(title=title, xaxis=dict(title='time/min'), yaxis=dict(title='count'), bargap=0.2, bargroupgap=0.1)
     fig = go.Figure(data=[coding_trace, debug_trace], layout=layout)
     return fig
@@ -146,20 +152,25 @@ def show_time_total(user_data: list, problemid: str=None, title: str= 'total cod
     统计不同编码、调试时间的人数。可以得到整体与每题的编码时间人数分布。
     横轴为时间段（min），纵轴为人数（个）
     分为总体情况与每题目情况
-    :param user_data: [{'userid':str, 'problemid':str, 'dayid':int, 'code_time':int, 'debug_time':int}]
+    :param user_data: [{'student_id':str, 'question_id':str, 'dayid':int, 'code_time':int, 'debug_time':int}]
     :param title: figure title
     :return:
     """
     df = pd.DataFrame(user_data)
-    df = df.set_index(['problemid'])
+    df = df.set_index(['question_id'])
     if problemid:
-        df = df.loc[problemid]
-    df = df.groupby(['userid'])['code_time', 'debug_time'].sum()
+        df = df.loc[[problemid], :]
+    df = df.groupby(['student_id'])['code_time', 'debug_time'].sum()
     df = df.sort_index()
     df['work_time'] = df['code_time'] + df['debug_time']
     max_time = df['work_time'].max()
 
-    total_trace = go.Histogram(x=df['work_time'], histnorm='count', name='code time', xbins=dict(start=0, end=max_time, size=20))
+    t_size = 50
+    if max_time > 5000:
+        t_size = max_time / 100
+    t_size = (int((t_size - 1) / 50) + 1) * 50
+
+    total_trace = go.Histogram(x=df['work_time'], histnorm='count', name='code time', xbins=dict(start=0, end=max_time, size=t_size))
     layout = go.Layout(title=title, xaxis=dict(title='time/min'), yaxis=dict(title='count'), bargap=0.2, bargroupgap=0.1)
     fig = go.Figure(data=[total_trace], layout=layout)
     return fig
@@ -169,16 +180,21 @@ def show_time_perproblem(user_data: list, userid: str=None, problem_list: list=[
     """
     统计个人每道题的编码，调试时间。可以得到每个人的每题编码时间。
     横轴为题目编号，纵轴为所花时间（min）
-    :param user_data: [{'userid':str, 'problemid':str, 'dayid':int, 'code_time':int, 'debug_time':int}]
+    :param user_data: [{'student_id':str, 'question_id':str, 'dayid':int, 'code_time':int, 'debug_time':int}]
     :param userid: 学号
     :return:
     """
     df = pd.DataFrame(user_data)
-    df = df.set_index('userid')
+    df['question_id'] = df['question_id'].map(lambda x: 'Q'+str(x))
+    df = df.set_index('student_id')
+    if userid not in df.index and userid != None:
+        return None
+
     if userid:
-        df = df.loc[userid]
-    df = df.groupby(['problemid'])['code_time', 'debug_time'].sum()
+        df = df.loc[[userid], :]
+    df = df.groupby(['question_id'])['code_time', 'debug_time'].sum()
     for problem in problem_list:
+        problem = 'Q' + str(problem)
         if problem not in df.index:
             df.loc[problem] = {'code_time': 0, 'debug_time': 0}
     df = df.sort_index()
@@ -199,18 +215,21 @@ def show_time_div_preproblem(user_data: list, problem_list:list = [], title: str
     """
     统计每题学生编码的平均时间的比例。可以发现不同题目的编码调试难度
     横轴为题目，纵轴为学生在该题的编码、调试比例。
-    :param user_data: [{'userid':str, 'problemid':str, 'dayid':int, 'code_time':int, 'debug_time':int}]
+    :param user_data: [{'student_id':str, 'question_id':str, 'dayid':int, 'code_time':int, 'debug_time':int}]
     :return:
     """
     df = pd.DataFrame(user_data)
-    gp = df.groupby(['userid', 'problemid'])
+    df['question_id'] = df['question_id'].map(lambda x: 'Q'+str(x))
+    gp = df.groupby(['student_id', 'question_id'])
     df = gp['code_time', 'debug_time'].sum()
-    df = df.reset_index(level=['userid', 'problemid'])
+    df = df.reset_index(level=['student_id', 'question_id'])
     df['average'] = df['code_time']/df['debug_time']
-    df = df.groupby(['problemid'])['average'].mean()
+    df = df.groupby(['question_id'])['average'].mean()
     for problem in problem_list:
+        problem = 'Q'+str(problem)
         if problem not in df.index:
             df.loc[problem] = {'average': 0}
+    df = df.replace(math.inf, 0)
     df = df.sort_values(ascending=False)
 
     trace = go.Bar(x=df.index, y=df, name='average time ratio')
@@ -223,7 +242,7 @@ def show_work_time(all_data: list):
     """
     统计24h内，每个时间段正在编写作业的用户人数。可以得到学生主要进行编码、完成作业的时间段。
     横轴为时间00:00-23:59，纵轴为人数（个）
-    :param all_data: [{'userid':str, 'data':list}], data包含去重之后的某用户的全部操作记录
+    :param all_data: [{'student_id':str, 'data':list}], data包含去重之后的某用户的全部操作记录
     :return:
     """
     time_dict = {}
@@ -232,12 +251,12 @@ def show_work_time(all_data: list):
 
     user_time_dict = {}
     for all_data_item in all_data:
-        userid = all_data_item['userid']
+        userid = all_data_item['student_id']
         data = all_data_item['data']
         for i in range(24):
             user_time_dict[str(i)] = []
         for da in data:
-            da_time = da['time']
+            da_time = da['op_happen_time']
             day = da_time.day
             hour = da_time.hour
             if day not in user_time_dict[str(hour)]:
@@ -253,12 +272,9 @@ def show_work_time(all_data: list):
         x.append(item[0])
         y.append(item[1])
 
-    print(x)
-    print(y)
     title = 'work hours'
     trace = go.Scatter(x=x, y=y, name='work time per day')
     layout = go.Layout(title=title, barmode='stack', showlegend=True, xaxis=dict(autotick=False))
-    print(layout.help('annotations'))
     fig = go.Figure(data=[trace], layout=layout)
     return fig
 
@@ -267,15 +283,18 @@ def show_work_time_personal(word_time_data: list, userid: str, day_list: list=[]
     """
     统计个人在作业期间每天的编码时间。可以得到用户每天编码所花时间的情况。
     横轴为天数，纵轴为时间（min）
-    :param word_time_data: [{'userid':str, 'problemid':str, 'dayid':int, 'code_time':int, 'debug_time':int}]
+    :param word_time_data: [{'student_id':str, 'question_id':str, 'dayid':int, 'code_time':int, 'debug_time':int}]
     :param userid: 学号
     :param title 标题
     :return:
     """
     df = pd.DataFrame(word_time_data)
-    df = df.set_index('userid')
+    df = df.set_index('student_id')
+    if userid not in df.index and userid != None:
+        return None
+
     if userid:
-        df = df.loc[userid]
+        df = df.loc[[userid], :]
     df = df.groupby('dayid')['code_time', 'debug_time'].sum()
     df['work_time'] = df['code_time'] + df['debug_time']
     for day in day_list:
