@@ -51,7 +51,7 @@ def show_paste_content_classification(paste_class: list, userid: str=None, class
             userid = 'all'
         title = userid + ' average time ratio'
 
-    trace = go.Bar(x=df.index, y=df, name='average time ratio')
+    trace = go.Pie(labels=df.index, values=df, name='average time ratio')
     layout = go.Layout(title=title, barmode='stack')
     fig = go.Figure(data=[trace], layout=layout)
     return fig
