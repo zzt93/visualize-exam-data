@@ -5,3 +5,6 @@ EID  = 36
 
 LOG_DIR = 'uploads/log/2017/'
 MONITOR_DIR = 'uploads/project/2017/10/02/'
+
+USER = 'cpp_test'
+PASS = 'cpp_test'

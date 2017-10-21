@@ -4,7 +4,9 @@ import time
 import datetime
 import string
 
-db = MySQLDatabase('visualize_exam', user='root', charset='utf8mb4', autocommit=False)
+from backend.util.config import USER, PASS
+
+db = MySQLDatabase('visualize_exam', user=USER, password=PASS, charset='utf8mb4', autocommit=False)
 
 def before_request_handler():
     db.connect()

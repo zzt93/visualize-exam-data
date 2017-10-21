@@ -354,4 +354,4 @@ if __name__ == '__main__':
     # merge_log_score(EID)
 
     # final step
-    # store_to_db(EID)
+    store_to_db(EID)
