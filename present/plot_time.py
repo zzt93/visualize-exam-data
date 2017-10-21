@@ -211,7 +211,7 @@ def show_time_div_preproblem(user_data: list, problem_list:list = [], title: str
     for problem in problem_list:
         if problem not in df.index:
             df.loc[problem] = {'average': 0}
-    df = df.sort_index()
+    df = df.sort_values(ascending=False)
 
     trace = go.Bar(x=df.index, y=df, name='average time ratio')
     layout = go.Layout(title=title, barmode='stack')
@@ -245,7 +245,7 @@ def show_work_time(all_data: list):
         for k in user_time_dict.keys():
             time_dict[k] += len(user_time_dict[k])
 
-    time_dict = sorted(time_dict.items(), key=lambda d: d[0])
+    time_dict = sorted(time_dict.items(), key=lambda d: int(d[0]))
 
     x = []
     y = []
@@ -253,9 +253,12 @@ def show_work_time(all_data: list):
         x.append(item[0])
         y.append(item[1])
 
+    print(x)
+    print(y)
     title = 'work hours'
-    trace = go.Bar(x=x, y=y, name='work time per day')
-    layout = go.Layout(title=title, barmode='stack')
+    trace = go.Scatter(x=x, y=y, name='work time per day')
+    layout = go.Layout(title=title, barmode='stack', showlegend=True, xaxis=dict(autotick=False))
+    print(layout.help('annotations'))
     fig = go.Figure(data=[trace], layout=layout)
     return fig
 
@@ -280,9 +283,10 @@ def show_work_time_personal(word_time_data: list, userid: str, day_list: list=[]
             df.loc[day] = {'code_time': 0, 'debug_time': 0, 'work_time':0}
     df = df.sort_index()
 
+
     title = userid + ' work time per day'
 
-    trace = go.Bar(x=df.index, y=df['work_time'], name='work time per day')
+    trace = go.Scatter(x=df.index, y=df['work_time'], name='work time per day')
     layout = go.Layout(title=title, barmode='stack')
     fig = go.Figure(data=[trace], layout=layout)
     return fig
