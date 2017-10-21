@@ -1,5 +1,6 @@
 import plotly.plotly
 import plotly.graph_objs as go
+import pandas as pd
 
 
 def show_score(score_data):
@@ -9,6 +10,9 @@ def show_score(score_data):
     :param score_data:  [{'userid':str, 'score':float}]
     :return:figure
     """
+
+    for data in score_data:
+        data['score'] = data['score']*100
 
     score_distribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     for student in score_data:
@@ -62,6 +66,10 @@ def show_problem_score(score_data: list, problemid: str):
     :param problemid: 题号
     :return:figure
     """
+
+    for data in score_data:
+        data['score'] = data['score']*100
+
     score_distribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     for student in score_data:
         if problemid == student['problemid']:
@@ -105,3 +113,75 @@ def show_problem_score(score_data: list, problemid: str):
     # print(score_distribution)
     # plotly.offline.plot(fig)  # WEB中显示图片
     return figure
+
+
+def show_testcase_error(testcase_data: list, problemid: str):
+    """
+    统计每道题每个测试用例错误的人数
+    :param testcase_data:[{'problemid':string , 'testcase_id':string , 'error_count':int}]
+    :param problemid:string
+    :return:figure
+    """
+    df = pd.DataFrame(testcase_data)
+    df = df.set_index('problemid')
+    print(df)
+    df = df.loc[problemid]
+    print(df)
+    # df = df.reset_index()
+    df = df.groupby(['testcase_id'])['error_count'].sum()
+    df = df.sort_index()
+    df = df.sort_values(ascending=False)
+
+    trace = go.Pie(
+        labels=df.index,
+        values=df,
+    )
+
+    data = [trace]
+    layout = go.Layout(
+        title='题目测试用例错误情况柱状图 -- '+problemid
+    )
+
+    figure = go.Figure(data=data, layout=layout)
+    # print(score_distribution)
+    # plotly.offline.plot(fig)    # WEB中显示图片
+    return figure
+
+
+def show_problem_avgscore(score_data: list):
+    """
+    统计每题的平均分
+    :param score_data:[{'userid':str, 'problemid':str, 'score':float}]
+    :return:figure
+    """
+
+    for data in score_data:
+        data['score'] = data['score']*100
+
+    df = pd.DataFrame(score_data)
+    df = df.set_index('userid')
+    df = df.groupby(['problemid'])['score'].mean()
+    df = df.sort_index()
+    df = df.sort_values(ascending=False)
+    df = df.round(1)
+
+    trace = go.Bar(
+        x=df.index,
+        y=df,
+        text=df,
+        textposition='auto',
+        marker=dict(
+            color='rgb(0,162,232)',
+        )
+    )
+
+    data = [trace]
+    layout = go.Layout(
+        title='每题平均分分布柱状图'
+    )
+
+    figure = go.Figure(data=data, layout=layout)
+    # print(score_distribution)
+    # plotly.offline.plot(fig)    # WEB中显示图片
+    return figure
+
