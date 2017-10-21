@@ -35,7 +35,7 @@ def show_build_error_count(build_error_data: list, problemid: str=None, top: int
     df = pd.DataFrame(build_error_data)
     df = df.set_index('problemid')
     if problemid:
-        df = df.loc(problemid)
+        df = df.loc[problemid]
     df = df.groupby(['error_code'])['count'].sum()
     df = df.sort_index()
     df = df.sort_values(ascending=False)
