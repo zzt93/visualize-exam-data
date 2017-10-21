@@ -286,6 +286,38 @@ def get_time_less():
                 user_list.append(entry)
     return user_list
 
+###
+def get_testcase_error():
+    result = []
+    for qid in QuestionInExam.select():
+        test_data = []
+        wrong_dict = {}
+        for tc in TestCase.select().where(TestCase.question_id == qid):
+            wrong_str = tc.wrong_list
+            wrong_list = wrong_str.strip('[').strip(']').split(", ")
+            for wt in wrong_list:
+                wt = wt.strip('\'')
+                if wt in wrong_dict:
+                    wrong_dict[wt] += 1
+                else:
+                    wrong_dict[wt] = 1
+            ac_str = tc.ac_list
+            ac_list = ac_str.strip('[').strip(']').split(", ")
+            for at in ac_list:
+                at = at.strip('\'')
+                if at not in wrong_dict:
+                    wrong_dict[at] = 0
+        for key in wrong_dict:
+            test_data.append({'question_id': qid.question_id, 'testcase_id': key, 'error_count': wrong_dict[key]})
+        result.append({'test_data': test_data, 'question_id':qid.question_id})
+    return result
+
+def get_problem_avgscore():
+    score_data = []
+    for sqr in StudentQuestionResult.select():
+        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id, 'score': sqr.score}
+        score_data.append(entry)
+    return score_data
 
 def get_all_user_id():
     res = []
@@ -317,5 +349,5 @@ def date_cmp(x, y):
 if __name__ == '__main__':
     os.chdir('../../')
     # print(get__problem_score())
-    print(get_time_total())
+    print(get_testcase_error())
     # print(datetime.datetime.now().date())
