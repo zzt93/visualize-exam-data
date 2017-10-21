@@ -4,32 +4,39 @@ import re
 import os
 
 
-def save_as_png(figure, filename):
+def save_as_png(figure, filepath, filename):
     """
     将图表保存为.png格式
     :param figure:list
     :param filename:string
     :return:
     """
+    if not os.path.exists(filepath):
+        os.mkdir(filepath)
     py.sign_in('Panjks-', 't59Jl2ktBmwycqKAX8uQ')
-    py.image.save_as(figure, filename=filename)
+    py.image.save_as(figure, filename=filepath+filename)
 
 
-def save_as_html(figure, filename):
+def save_as_html(figure, filepath, filename):
     """
     将图表保存为.html格式
     :param figure: list
     :param filename: string
     :return:
     """
-    offline.plot(figure, auto_open=False, filename=filename)
+    if not os.path.exists(filepath):
+        os.mkdir(filepath)
+    offline.plot(figure, auto_open=False, filename=filepath+filename)
 
 
-def save_as_txt(content, filename):
-    with open(filename, 'w') as f:
+def save_as_txt(content, filepath, txt_filename):
+    if not os.path.exists(filepath):
+        os.mkdir(filepath)
+
+    with open(filepath+txt_filename, 'w') as f:
         for student in content:
             for key in student:
-                f.write(key+':'+str(student[key])+'\t')
+                f.write(key + ':' + str(student[key]) + '\t')
             f.write('\n')
 
 
