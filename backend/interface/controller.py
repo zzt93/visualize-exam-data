@@ -259,7 +259,7 @@ def get_build_failed_count():
     # return build_failed_data
     build_data = []
     for br in BuildResult.select():
-        entry = {'question_id': br.question_id, 'student_id': br.student_id.student_id, 'failed_count': br.failed_count,
+        entry = {'question_id': br.question_id.question_id, 'student_id': br.student_id.student_id, 'failed_count': br.failed_count,
                  'success_count': br.success_count}
         build_data.append(entry)
     return build_data

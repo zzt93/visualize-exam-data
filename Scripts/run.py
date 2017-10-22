@@ -210,6 +210,8 @@ if __name__ == '__main__':
 
 
     # score_data = get_score()
+    # for s in score_data:
+    #     s['score'] = s['score']/15
     # # show_score
     # fig = show_score(score_data)
     # if fig:
@@ -217,21 +219,21 @@ if __name__ == '__main__':
 
 
     # score_problem_data = get_problem_score()
+    # for s in score_problem_data:
+    #     s['score'] = s['score']
+    #     print(s)
     # # show_problem_score
     # method_path = os.path.join(SCORE_PATH, 'pre_problem')
     # for p in problems:
     #     fig = show_problem_score(score_problem_data, str(p))
     #     if fig:
     #         save_as_html(fig, method_path, 'Q'+str(p)+'.html')
-    #
-    #
+
+
     # test_data = get_testcase_error()
     # testcase_data = []
     # for te in test_data:
     #     testcase_data.extend(te['test_data'])
-    # for t in testcase_data:
-    #     if t['testcase_id'] == '':
-    #         print(t)
     # # show_testcase_error
     # method_path = os.path.join(SCORE_PATH, 'testcase')
     # for p in problems:
@@ -240,35 +242,37 @@ if __name__ == '__main__':
     #         save_as_html(fig, method_path, 'Q'+str(p)+'.html')
 
 
-    # show_problem_avgscore
     # ave_score_data = get_problem_avgscore()
+    # for a in ave_score_data:
+    #     print(a)
+    # # show_problem_avgscore
     # fig = show_problem_avgscore(ave_score_data)
     # save_as_html(fig, SCORE_PATH, 'ave_total.html')
 
-    # build_error_data = get_build_error_count()
-    # # show_build_error_count
-    # method_path = os.path.join(BUILD_PATH, 'error_code')
-    # fig = show_build_error_count(build_error_data, None)
-    # if fig:
-    #     save_as_html(fig, method_path, 'total.html')
-    # for p in problems:
-    #     fig = show_build_error_count(build_error_data, str(p))
-    #     if fig:
-    #         save_as_html(fig, method_path, 'Q'+str(p)+'.html')
+    build_error_data = get_build_error_count()
+    # show_build_error_count
+    method_path = os.path.join(BUILD_PATH, 'error_code')
+    fig = show_build_error_count(build_error_data, None)
+    if fig:
+        save_as_html(fig, method_path, 'total.html')
+    for p in problems:
+        fig = show_build_error_count(build_error_data, str(p))
+        if fig:
+            save_as_html(fig, method_path, 'Q'+str(p)+'.html')
 
-    # build_failed_data = get_build_failed_count()
-    # # show_build_failed_count
-    # fig = show_build_failed_count(build_failed_data)
-    # if fig:
-    #     save_as_html(fig, BUILD_PATH, 'build_failed_total.html')
+    build_failed_data = get_build_failed_count()
+    # show_build_failed_count
+    fig = show_build_failed_count(build_failed_data)
+    if fig:
+        save_as_html(fig, BUILD_PATH, 'build_failed_total.html')
 
 
     # show_time_less
-    less = get_time_less()
-    # show_time_less
-    method_path = os.path.join(ROOT_PATH, )
-    res = show_time_less(less)
-    save_as_txt(less, method_path, 'less_time_user.txt')
+    # less = get_time_less()
+    # # show_time_less
+    # method_path = os.path.join(ROOT_PATH, )
+    # res = show_time_less(less)
+    # save_as_txt(less, method_path, 'less_time_user.txt')
 
 
 

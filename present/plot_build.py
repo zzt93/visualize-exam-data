@@ -81,15 +81,14 @@ def show_build_failed_count(build_data: list):
         x=df['failed_count'],
         histnorm='count',
         name='failed build times',
-        xbins=dict(start=0, end=max_failed_count+1, size=10),
-        marker=dict(
-            color='rgb(0,162,232)',
-        )
+        xbins=dict(start=0, end=max_failed_count+1, size=10)
     )
     data = [trace]
     layout = go.Layout(
         title='学生整体编译次数失败分布柱状图',
-        barmode='Stack'
+        barmode='Stack',
+        bargap=0.2,
+        bargroupgap=0.1
     )
 
     figure = go.Figure(data=data, layout=layout)
