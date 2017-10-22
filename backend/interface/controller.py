@@ -271,16 +271,16 @@ def get_time_less():
     for ques in QuestionInExam.select():
         cnt = 0
         total_time = 0
-        for stu in StudentQuestionResult.select().where(StudentQuestionResult.question_id == ques.question_id):
-            total_time += stu.used_time
+        for cdt in CodeAndDebugTime.select().where(CodeAndDebugTime.question_id == ques.question_id):
+            total_time += cdt.code_time + cdt.debug_time
             cnt += 1
         if cnt == 0:
             cnt = 1
         mean_time = total_time / cnt
-        for stu in StudentQuestionResult.select().where(StudentQuestionResult.question_id == ques.question_id):
-            if stu.used_time < 0.2 * mean_time:
-                entry = {'student_id': stu.student_id.student_id, 'question_id': ques.question_id,
-                         'used_time': stu.used_time,
+        for cdt in CodeAndDebugTime.select().where(CodeAndDebugTime.question_id == ques.question_id):
+            if (cdt.code_time + cdt.debug_time) < 0.2 * mean_time:
+                entry = {'student_id': cdt.student_id.student_id, 'question_id': ques.question_id,
+                         'used_time': cdt.code_time + cdt.debug_time,
                          'mean_time': mean_time}
                 user_list.append(entry)
     return user_list
@@ -363,5 +363,5 @@ def date_cmp(x, y):
 if __name__ == '__main__':
     os.chdir('../../')
     # print(get__problem_score())
-    print(get_all_day_id())
+    print(get_time_less())
     # print(datetime.datetime.now().date())
