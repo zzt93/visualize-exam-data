@@ -54,7 +54,7 @@ def show_debug_total(debug_count_data):
 
     t_size = 50
     if max_debug_count > 5000:
-        t_size = max_time / 100
+        t_size = max_debug_count / 100
     t_size = (int((t_size - 1) / 50) + 1) * 50
 
     # print (x_axis)
