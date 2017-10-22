@@ -326,8 +326,16 @@ def get_all_user_id():
     return res
 
 
+all_day_id = None
 def get_all_day_id():
-    pass
+    global all_day_id
+    base_date = datetime.date(2017, 9, 26)
+    if all_day_id is None:
+        all_day_id = {}
+        for day in range(1, 19):
+            key = base_date +  datetime.timedelta(days=day)
+            all_day_id[str(key)] = day
+    return all_day_id
 
 
 all_problem_id = None
@@ -349,5 +357,5 @@ def date_cmp(x, y):
 if __name__ == '__main__':
     os.chdir('../../')
     # print(get__problem_score())
-    print(get_testcase_error())
+    print(get_all_day_id())
     # print(datetime.datetime.now().date())
