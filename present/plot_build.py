@@ -7,7 +7,7 @@ def show_build_error_count(build_error_data: list, problemid: str=None, top: int
     """
     统计所有编译错误的次数的分布。可以比较不同编译错误出现的频率。
     横轴为具体编译错误，纵轴为个数
-    :param build_error_data: [{'problemid':str, 'error_code':str, 'count':int}]
+    :param build_error_data: [{'question_id':str, 'error_code':str, 'count':int}]
     :param problemid: 题号
     :param top: 前N个
     :return:
@@ -33,9 +33,12 @@ def show_build_error_count(build_error_data: list, problemid: str=None, top: int
     print(df)
     '''
     df = pd.DataFrame(build_error_data)
-    df = df.set_index('problemid')
+    df = df.set_index('question_id')
+    df.index = df.index.map(lambda x: str(x))
+    if problemid not in df.index and problemid != None:
+        return None
     if problemid:
-        df = df.loc[problemid]
+        df = df.loc[[problemid], :]
     df = df.groupby(['error_code'])['count'].sum()
     df = df.sort_index()
     df = df.sort_values(ascending=False)
@@ -65,17 +68,15 @@ def show_build_failed_count(build_data: list):
     """
     统计所有编译失败次数的分布。可以比较编译失败。
     横轴为编译失败次数，纵轴为人数
-    :param build_data: [{'problemid':str, 'userid':str, 'failed_count':int, 'success_count':int}]
+    :param build_data: [{'problemid':str, 'student_id':str, 'failed_count':int, 'success_count':int}]
     :return:
     """
     df = pd.DataFrame(build_data)
-    df = df.set_index(['userid'])
-    df = df.groupby(['userid'])['failed_count', 'success_count'].sum()
+    # df = df.set_index(['student_id'])
+    df = df.groupby(['student_id'])['failed_count', 'success_count'].sum()
     df = df.sort_index()
     max_failed_count = df['failed_count'].max()
-    # print (max_failed_count)
-    print(df)
-    # print (x_axis)
+
     trace = go.Histogram(
         x=df['failed_count'],
         histnorm='count',

@@ -222,7 +222,7 @@ def get_problem_score():
     """
     score_data = []
     for sqr in StudentQuestionResult.select():
-        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id, 'score': sqr.score}
+        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id.question_id, 'score': sqr.score}
         score_data.append(entry)
     return score_data
 
@@ -277,7 +277,6 @@ def get_time_less():
         if cnt == 0:
             cnt = 1
         mean_time = total_time / cnt
-        print(mean_time, ques.question_id)
         for stu in StudentQuestionResult.select().where(StudentQuestionResult.question_id == ques.question_id):
             if stu.used_time < 0.2 * mean_time:
                 entry = {'student_id': stu.student_id.student_id, 'question_id': ques.question_id,
@@ -317,7 +316,7 @@ def get_testcase_error():
 def get_problem_avgscore():
     score_data = []
     for sqr in StudentQuestionResult.select():
-        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id, 'score': sqr.score}
+        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id.question_id, 'score': sqr.score}
         score_data.append(entry)
     return score_data
 

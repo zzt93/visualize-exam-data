@@ -1,10 +1,15 @@
 from backend.interface.controller import get_all_problem_id, get_all_day_id,get_all_user_id,get_build_error_count, get_build_failed_count, get_coding_speed, get_debug_personal, get_debug_total, get_paste_content_classification, get_paste_length_personal, get_problem_avgscore, get_problem_score, get_process_personal, get_score, get_testcase_error, get_time_div_total, get_time_less, get_time_personal, get_time_total, get_work_time, get_work_time_personal
 from present.plot_time import show_process_personal, show_time_detached, show_time_div_preproblem, show_time_perproblem, show_time_total, show_work_time, show_work_time_personal
 from present.plot_copy import show_paste_length_personal, show_paste_content_classification
+from present.plot_insert import show_coding_speed
+from present.plot_debug import show_debug_personal, show_debug_total
+from present.plot_score import show_score, show_problem_avgscore, show_problem_score, show_testcase_error
+from present.plot_build import show_build_error_count, show_build_failed_count
+from present.plot_check import show_time_less
 from present.plot_util import save_as_png, save_as_html, save_as_txt
 import plotly.offline as py
 import os
-from common.plot_constants import ROOT_PATH, TIME_PATH, COPY_PATH
+from common.plot_constants import ROOT_PATH, TIME_PATH, COPY_PATH, INSERT_PATH, DEBUG_PATH, SCORE_PATH, BUILD_PATH, OTHER_PATH
 
 
 
@@ -92,7 +97,7 @@ if __name__ == '__main__':
     # result = get_time_total()
 
 
-    # # show_time_detached
+    # show_time_detached
     # method_path = os.path.join(TIME_PATH, 'user_time')
     # method_path = os.path.join(method_path, 'time_detached')
     # fig = show_time_detached(result, None)
@@ -100,8 +105,8 @@ if __name__ == '__main__':
     # for pro in problems:
     #     fig = show_time_detached(result, pro)
     #     save_as_html(fig, method_path, 'Q'+str(pro)+'.html')
-    #
-    # # show_time_total
+
+    # show_time_total
     # method_path = os.path.join(TIME_PATH, 'user_time')
     # method_path = os.path.join(method_path, 'time_total')
     # fig = show_time_total(result, None)
@@ -109,7 +114,7 @@ if __name__ == '__main__':
     # for pro in problems:
     #     fig = show_time_total(result, pro)
     #     save_as_html(fig, method_path, 'Q' + str(pro) + '.html')
-    #
+
     # show_time_perproblem
     # method_path = os.path.join(TIME_PATH, 'problem_time')
     # method_path = os.path.join(method_path, 'total_time')
@@ -151,27 +156,142 @@ if __name__ == '__main__':
 
 
 
-    paste_data = get_paste_length_personal()
-    paste_length_data = [ t['pasta_data'] for t in paste_data]
+    # paste_data = get_paste_length_personal()
+    # paste_length_data = [ t['pasta_data'] for t in paste_data]
+    #
+    # # show_paste_length_personal
+    # method_path = os.path.join(COPY_PATH, 'paste_length')
+    # for u in users:
+    #     fig = show_paste_length_personal(paste_length_data, u)
+    #     if fig != None:
+    #         save_as_html(fig, method_path, str(u)+'.html')
 
-    # show_paste_length_personal
-    method_path = os.path.join(COPY_PATH, 'paste_length')
-    for u in users:
-        fig = show_paste_length_personal(paste_length_data, u)
-        if fig != None:
-            save_as_html(fig, method_path, str(u)+'.html')
+
+    # clas = get_paste_content_classification()
+    # paste_cla_data = [t['paste_data'] for t in clas]
+    # # show_paste_content_classification
+    # method_path = os.path.join(COPY_PATH, 'paste_classification')
+    # fig = show_paste_content_classification(paste_cla_data, None)
+    # save_as_html(fig, method_path, 'total.html')
+    # for u in users:
+    #     fig = show_paste_content_classification(paste_cla_data, u)
+    #     if fig != None:
+    #         save_as_html(fig, method_path, str(u)+'.html')
 
 
-    clas = get_paste_content_classification()
-    paste_cla_data = [t['paste_data'] for t in clas]
-    # show_paste_content_classification
-    method_path = os.path.join(COPY_PATH, 'paste_classification')
-    fig = show_paste_content_classification(paste_cla_data, None)
-    save_as_html(fig, method_path, 'total.html')
-    for u in users:
-        fig = show_paste_content_classification(paste_cla_data, u)
-        if fig != None:
-            save_as_html(fig, method_path, str(u)+'.html')
+
+
+    # code_speed_data = get_coding_speed()
+    # show_coding_speed
+    # method_path = os.path.join(INSERT_PATH, 'code_speed')
+    # fig = show_coding_speed(code_speed_data)
+    # save_as_html(fig, method_path, 'total.html')
+
+
+    # debug_per_data = get_debug_personal()
+    # debug_person_data = [t['debug_data'] for t in debug_per_data]
+    # # show_debug_personal
+    # method_path = os.path.join(DEBUG_PATH, 'per_problem')
+    # fig = show_debug_personal(debug_person_data, None)
+    # if fig:
+    #     save_as_html(fig, method_path, 'total.html')
+    # for u in users:
+    #     fig = show_debug_personal(debug_person_data, u)
+    #     if fig:
+    #         save_as_html(fig, method_path, str(u)+'.html')
+
+
+    # debug_total_data = get_debug_total()
+    # # show_debug_total
+    # method_path = os.path.join(DEBUG_PATH, 'debug_count')
+    # fig = show_debug_total(debug_total_data)
+    # if fig:
+    #     save_as_html(fig, method_path, 'total.html')
+
+
+    # score_data = get_score()
+    # # show_score
+    # fig = show_score(score_data)
+    # if fig:
+    #     save_as_html(fig, SCORE_PATH, 'total.html')
+
+
+    # score_problem_data = get_problem_score()
+    # # show_problem_score
+    # method_path = os.path.join(SCORE_PATH, 'pre_problem')
+    # for p in problems:
+    #     fig = show_problem_score(score_problem_data, str(p))
+    #     if fig:
+    #         save_as_html(fig, method_path, 'Q'+str(p)+'.html')
+    #
+    #
+    # test_data = get_testcase_error()
+    # testcase_data = []
+    # for te in test_data:
+    #     testcase_data.extend(te['test_data'])
+    # for t in testcase_data:
+    #     if t['testcase_id'] == '':
+    #         print(t)
+    # # show_testcase_error
+    # method_path = os.path.join(SCORE_PATH, 'testcase')
+    # for p in problems:
+    #     fig = show_testcase_error(testcase_data, str(p))
+    #     if fig:
+    #         save_as_html(fig, method_path, 'Q'+str(p)+'.html')
+
+
+    # show_problem_avgscore
+    # ave_score_data = get_problem_avgscore()
+    # fig = show_problem_avgscore(ave_score_data)
+    # save_as_html(fig, SCORE_PATH, 'ave_total.html')
+
+    # build_error_data = get_build_error_count()
+    # # show_build_error_count
+    # method_path = os.path.join(BUILD_PATH, 'error_code')
+    # fig = show_build_error_count(build_error_data, None)
+    # if fig:
+    #     save_as_html(fig, method_path, 'total.html')
+    # for p in problems:
+    #     fig = show_build_error_count(build_error_data, str(p))
+    #     if fig:
+    #         save_as_html(fig, method_path, 'Q'+str(p)+'.html')
+
+    # build_failed_data = get_build_failed_count()
+    # # show_build_failed_count
+    # fig = show_build_failed_count(build_failed_data)
+    # if fig:
+    #     save_as_html(fig, BUILD_PATH, 'build_failed_total.html')
+
+
+    # show_time_less
+    less = get_time_less()
+    # show_time_less
+    method_path = os.path.join(ROOT_PATH, )
+    res = show_time_less(less)
+    save_as_txt(less, method_path, 'less_time_user.txt')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
