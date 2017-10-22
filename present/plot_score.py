@@ -13,11 +13,18 @@ def show_score(score_data):
 
     for data in score_data:
         data['score'] = data['score'] * 100
+
+    userids = []
     new_score_data = []
     for data in score_data:
-        if data not in new_score_data:
+        if data['userid'] not in userids:
+            userids.append(data['userid'])
             new_score_data.append(data)
-
+        else:
+            for new_data in new_score_data:
+                if data['userid'] == new_data['userid']:
+                    if data['score'] > new_data['score']:
+                        new_data['score'] = data['score']
     score_data = new_score_data
 
     score_distribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -75,10 +82,18 @@ def show_problem_score(score_data: list, problemid: str):
 
     for data in score_data:
         data['score'] = data['score'] * 100
+    userids = []
     new_score_data = []
     for data in score_data:
-        if data not in new_score_data:
+        if data['userid'] not in userids:
+            userids.append(data['userid'])
             new_score_data.append(data)
+        else:
+            for new_data in new_score_data:
+                if data['userid'] == new_data['userid']:
+                    if data['score'] > new_data['score']:
+                        new_data['score'] = data['score']
+    score_data = new_score_data
 
     score_distribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     for student in score_data:
@@ -133,8 +148,8 @@ def show_testcase_error(testcase_data: list, problemid: str):
     :return:figure
     """
     for data in testcase_data:
-            if data['testcase_id'] == '':
-                data['testcase_id'] == 'AC'
+        if data['testcase_id'] == '':
+            data['testcase_id'] == 'AC'
     df = pd.DataFrame(testcase_data)
     df = df.set_index('question_id')
     df.index = df.index.map(lambda x: str(x))
@@ -173,11 +188,18 @@ def show_problem_avgscore(score_data: list):
 
     for data in score_data:
         data['score'] = data['score'] * 100
-
+    userids = []
     new_score_data = []
     for data in score_data:
-        if data not in new_score_data:
+        if data['userid'] not in userids:
+            userids.append(data['userid'])
             new_score_data.append(data)
+        else:
+            for new_data in new_score_data:
+                if data['userid'] == new_data['userid']:
+                    if data['score'] > new_data['score']:
+                        new_data['score'] = data['score']
+    score_data = new_score_data
 
     df = pd.DataFrame(score_data)
     df = df.set_index('student_id')
