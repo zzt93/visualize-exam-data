@@ -3,7 +3,7 @@ import plotly.graph_objs as go
 import pandas as pd
 
 
-def show_debug_personal(debug_data: list, userid: str=None, problemid: str=None) :
+def show_debug_personal(debug_data: list, userid: str = None, problemid: str = None):
     """
     统计每个人在不同题目的调试次数。可以发现不同题目的调试次数，评估不同题目的难度。
     横轴为题目，纵轴为调试次数（个）
@@ -20,9 +20,8 @@ def show_debug_personal(debug_data: list, userid: str=None, problemid: str=None)
     if userid:
         df = df.loc[[userid], :]
     df = df.groupby(['problem_id'])['debug_count'].sum()
-    df.index = df.index.map(lambda x: 'Q'+str(x))
+    df.index = df.index.map(lambda x: 'Q' + str(x))
     df = df.sort_index()
-
 
     trace = go.Bar(
         x=df.index,
@@ -36,7 +35,7 @@ def show_debug_personal(debug_data: list, userid: str=None, problemid: str=None)
         title='不同题目调试次数柱状图'
     )
 
-    figure = go.Figure(data=data,layout=layout)
+    figure = go.Figure(data=data, layout=layout)
     return figure
 
 
@@ -47,26 +46,27 @@ def show_debug_total(debug_count_data):
     :param debug_count_data: [{'student_id':str, 'debug_count':int}]
     :return:figure
     """
-    debug_count_personal = []
-    debug_distribution = []
-    x_axis = []
-    for student in debug_count_data:
-        debug_count_personal.append(student['debug_count'])
 
-    for i in range(max(debug_count_personal)+1):
-        debug_distribution.append(0)
-        x_axis.append(i)
+    df = pd.DataFrame(debug_count_data)
+    df = df.groupby(['student_id'])['debug_count'].sum()
+    df = df.sort_index()
+    max_debug_count = df.max()
 
-    for i in x_axis:
-        for student in debug_count_data:
-            if student['debug_count'] == i:
-                debug_distribution[i] = debug_distribution[i]+1
+    t_size = 50
+    if max_debug_count > 5000:
+        t_size = max_time / 100
+    t_size = (int((t_size - 1) / 50) + 1) * 50
+
     # print (x_axis)
-    trace = go.Bar(
-        x=x_axis,
-        y=debug_distribution,
-        text=debug_distribution,
-        textposition='auto',
+    trace = go.Histogram(
+        x=df,
+        histnorm='count',
+        name='debug_count',
+        xbins=dict(
+            start=0,
+            end=max_debug_count,
+            size=t_size
+        ),
         marker=dict(
             color='rgb(0,162,232)',
         )
@@ -74,7 +74,8 @@ def show_debug_total(debug_count_data):
     data = [trace]
     layout = go.Layout(
         title='学生整体调试次数分布柱状图',
-        barmode='Stack'
+        barmode='Stack',
+        xaxis=dict(title='debug_times'), yaxis=dict(title='count'), bargap=0.2, bargroupgap=0.1
     )
 
     figure = go.Figure(data=data, layout=layout)
