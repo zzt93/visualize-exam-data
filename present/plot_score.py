@@ -41,7 +41,7 @@ def show_score(score_data):
         x=['0-10', '11-20', '21-30', '31-40', '41-50', '51-60', '61-70', '71-80',
            '81-90', '91-100'],
         y=score_distribution,
-        text=score_distribution,
+        #text=score_distribution,
         textposition='auto',
         marker=dict(
             color='rgb(0,162,232)',
@@ -62,7 +62,7 @@ def show_problem_score(score_data: list, problemid: str):
     """
     统计每题得分的分布情况
     横轴为得分，纵轴为人数（个）
-    :param score_data: [{'userid':str, 'problemid':str, 'score':float}]
+    :param score_data: [{'userid':str, 'question_id':str, 'score':float}]
     :param problemid: 题号
     :return:figure
     """
@@ -72,7 +72,7 @@ def show_problem_score(score_data: list, problemid: str):
 
     score_distribution = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     for student in score_data:
-        if problemid == student['problemid']:
+        if problemid == str(student['question_id']):
             if 0 <= student['score'] <= 10:
                 score_distribution[0] = score_distribution[0] + 1
             elif 11 <= student['score'] <= 20:
@@ -106,7 +106,7 @@ def show_problem_score(score_data: list, problemid: str):
     )
     data = [trace]
     layout = go.Layout(
-        title='学生题目得分得分分布柱状图 -- '+problemid
+        title='学生题目得分得分分布柱状图 -- '+str(problemid)
     )
 
     figure = go.Figure(data=data, layout=layout)
@@ -118,15 +118,18 @@ def show_problem_score(score_data: list, problemid: str):
 def show_testcase_error(testcase_data: list, problemid: str):
     """
     统计每道题每个测试用例错误的人数
-    :param testcase_data:[{'problemid':string , 'testcase_id':string , 'error_count':int}]
+    :param testcase_data:[{'question_id':string , 'testcase_id':string , 'error_count':int}]
     :param problemid:string
     :return:figure
     """
     df = pd.DataFrame(testcase_data)
-    df = df.set_index('problemid')
-    print(df)
-    df = df.loc[problemid]
-    print(df)
+    df = df.set_index('question_id')
+    df.index = df.index.map(lambda x: str(x))
+    if problemid not in df.index:
+        return None
+
+    df = df.loc[[problemid], :]
+
     # df = df.reset_index()
     df = df.groupby(['testcase_id'])['error_count'].sum()
     df = df.sort_index()
@@ -159,9 +162,10 @@ def show_problem_avgscore(score_data: list):
         data['score'] = data['score']*100
 
     df = pd.DataFrame(score_data)
-    df = df.set_index('userid')
-    df = df.groupby(['problemid'])['score'].mean()
+    df = df.set_index('student_id')
+    df = df.groupby(['question_id'])['score'].mean()
     df = df.sort_index()
+    df.index = df.index.map(lambda x: 'Q'+str(x))
     df = df.sort_values(ascending=False)
     df = df.round(1)
 
