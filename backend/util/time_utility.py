@@ -19,12 +19,19 @@ def string_to_datetime(s):
                 ss = s.split(' ')
                 new_date = ss[0][:-3] + ' ' + ss[1]
                 try:
-                    return datetime.datetime.strptime(new_date, '%Y/%m/%d/%a %H:%M:%S')
-                except ValueError:
-                    # 2017/10/2 星期一 下午 20:04:08
-                    ss = s.split(' ')
-                    new_date = ss[0] + ' ' + ss[3]
                     return datetime.datetime.strptime(new_date, '%Y/%m/%d %H:%M:%S')
+                except ValueError:
+                    try:
+                        # 2017/10/2 星期一 下午 20:04:08
+                        ss = s.split(' ')
+                        if len(ss) != 4:
+                            print(s)
+                            raise ValueError('date format: ' + s)
+                        new_date = ss[0] + ' ' + ss[3]
+                        return datetime.datetime.strptime(new_date, '%Y/%m/%d %H:%M:%S')
+                    except ValueError:
+                        # 29/9/2017 0:15:40
+                        return datetime.datetime.strptime(s, '%d/%m/%Y %H:%M:%S')
 
 
 def timedelta_milliseconds(td):

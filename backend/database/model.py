@@ -76,8 +76,8 @@ class Operation(BaseModel):
 class CodeAndDebugTime(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = ForeignKeyField(QuestionInExam)
-    code_time = IntegerField(default=0)
-    debug_time = IntegerField(default=0)
+    code_time = IntegerField(default=0, help_text='unit: second')
+    debug_time = IntegerField(default=0, help_text='unit: second')
     date = DateField()
     class Meta:
         primary_key = CompositeKey('student_id', 'question_id', 'date')
@@ -88,7 +88,7 @@ class CodeAndDebugTime(BaseModel):
 class Paste(BaseModel):
     student_id = ForeignKeyField(Student)
     question_id = ForeignKeyField(QuestionInExam)
-    paste_content = CharField(default='')
+    paste_content = CharField(default='', max_length=1000)
     paste_type = IntegerField(default=0)
     happen_time = DateTimeField()
     class Meta:

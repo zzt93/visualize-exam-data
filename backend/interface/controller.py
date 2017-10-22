@@ -286,6 +286,7 @@ def get_time_less():
                 user_list.append(entry)
     return user_list
 
+
 ###
 def get_testcase_error():
     result = []
@@ -309,8 +310,9 @@ def get_testcase_error():
                     wrong_dict[at] = 0
         for key in wrong_dict:
             test_data.append({'question_id': qid.question_id, 'testcase_id': key, 'error_count': wrong_dict[key]})
-        result.append({'test_data': test_data, 'question_id':qid.question_id})
+        result.append({'test_data': test_data, 'question_id': qid.question_id})
     return result
+
 
 def get_problem_avgscore():
     score_data = []
@@ -318,6 +320,7 @@ def get_problem_avgscore():
         entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id, 'score': sqr.score}
         score_data.append(entry)
     return score_data
+
 
 def get_all_user_id():
     res = []
@@ -339,6 +342,10 @@ def get_all_day_id():
 
 
 all_problem_id = None
+
+
+def get_all_paste_type():
+    return {0: 'UNKNOWN', 1: 'LONG', 2: 'IF', 3: 'LOOP', 4: 'FUNC', 5: 'TOKEN'}
 
 
 def get_all_problem_id():
