@@ -130,6 +130,8 @@ def show_time_detached(user_data: list, problemid: int=None, title: str= 'coding
         df = df.loc[[problemid], :]
     df = df.groupby(['student_id'])['code_time', 'debug_time'].sum()
     df = df.sort_index()
+    df['code_time'] = df['code_time']/60
+    df['debug_time'] = df['debug_time']/60
     max_time = df['code_time'].max()
     max_time2 = df['debug_time'].max()
     if max_time < max_time2:
@@ -163,6 +165,7 @@ def show_time_total(user_data: list, problemid: str=None, title: str= 'total cod
     df = df.groupby(['student_id'])['code_time', 'debug_time'].sum()
     df = df.sort_index()
     df['work_time'] = df['code_time'] + df['debug_time']
+    df['work_time'] = df['work_time']/60
     max_time = df['work_time'].max()
 
     t_size = 50
@@ -198,6 +201,8 @@ def show_time_perproblem(user_data: list, userid: str=None, problem_list: list=[
         if problem not in df.index:
             df.loc[problem] = {'code_time': 0, 'debug_time': 0}
     df = df.sort_index()
+    df['code_time'] = df['code_time']/60
+    df['debug_time'] = df['debug_time']/60
 
     if not title:
         if not userid:
@@ -301,6 +306,7 @@ def show_work_time_personal(word_time_data: list, userid: str, day_list: list=[]
         if day not in df.index:
             df.loc[day] = {'code_time': 0, 'debug_time': 0, 'work_time':0}
     df = df.sort_index()
+    df['work_time'] = df['work_time']/60
 
 
     title = userid + ' work time per day'

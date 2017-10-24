@@ -1,6 +1,7 @@
 import plotly.graph_objs as go
 from plotly import tools
 import pandas as pd
+from backend.interface.controller import get_all_paste_type
 
 
 def show_paste_length_personal(paste_data: list, userid: str=None, title: str=None):
@@ -48,7 +49,9 @@ def show_paste_content_classification(paste_class: list, userid: str=None, class
     for cla in classes:
         if cla not in df.index:
             df.loc[cla] = 0
-    df = df.sort_index()
+
+    type_dict = get_all_paste_type()
+    df.index = df.index.map(lambda x:type_dict[x])
 
     if not title:
         if not userid:

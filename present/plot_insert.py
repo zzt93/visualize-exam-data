@@ -7,22 +7,18 @@ def show_coding_speed(speed_data):
     """
     统计学生平均编码速度（每分钟插入字符）的人数分布。可以整体评估学生的编码速度。
     横轴为编码速度（个/min），纵轴为人数
-    :param speed_data: [{'userid':str, 'speed':float}]
+    :param speed_data: [{'student_id':str, 'speed':float}]
     :return:figure
     """
     df = pd.DataFrame(speed_data)
-    df = df.set_index(['userid'])
-    # df = df.groupby(['userid'])['speed'].sum()
-    print (df)
+    df = df.set_index(['student_id'])
+    # df = df.groupby(['student_id'])['speed'].sum()
     max_speed = 100
     trace = go.Histogram(
         x=df['speed'],
         histnorm='count',
         name='coding speed',
-        xbins=dict(start=0, end=max_speed, size=5),
-        marker=dict(
-            color='rgb(0,162,232)',
-        )
+        xbins=dict(start=0, end=max_speed, size=2)
     )
     data = [trace]
     layout = go.Layout(

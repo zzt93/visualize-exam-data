@@ -222,7 +222,7 @@ def get_problem_score():
     """
     score_data = []
     for sqr in StudentQuestionResult.select():
-        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id, 'score': sqr.score}
+        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id.question_id, 'score': sqr.score}
         score_data.append(entry)
     return score_data
 
@@ -259,7 +259,7 @@ def get_build_failed_count():
     # return build_failed_data
     build_data = []
     for br in BuildResult.select():
-        entry = {'question_id': br.question_id, 'student_id': br.student_id.student_id, 'failed_count': br.failed_count,
+        entry = {'question_id': br.question_id.question_id, 'student_id': br.student_id.student_id, 'failed_count': br.failed_count,
                  'success_count': br.success_count}
         build_data.append(entry)
     return build_data
@@ -271,17 +271,16 @@ def get_time_less():
     for ques in QuestionInExam.select():
         cnt = 0
         total_time = 0
-        for stu in StudentQuestionResult.select().where(StudentQuestionResult.question_id == ques.question_id):
-            total_time += stu.used_time
+        for cdt in CodeAndDebugTime.select().where(CodeAndDebugTime.question_id == ques.question_id):
+            total_time += cdt.code_time + cdt.debug_time
             cnt += 1
         if cnt == 0:
             cnt = 1
         mean_time = total_time / cnt
-        print(mean_time, ques.question_id)
-        for stu in StudentQuestionResult.select().where(StudentQuestionResult.question_id == ques.question_id):
-            if stu.used_time < 0.2 * mean_time:
-                entry = {'student_id': stu.student_id.student_id, 'question_id': ques.question_id,
-                         'used_time': stu.used_time,
+        for cdt in CodeAndDebugTime.select().where(CodeAndDebugTime.question_id == ques.question_id):
+            if (cdt.code_time + cdt.debug_time) < 0.2 * mean_time:
+                entry = {'student_id': cdt.student_id.student_id, 'question_id': ques.question_id,
+                         'used_time': cdt.code_time + cdt.debug_time,
                          'mean_time': mean_time}
                 user_list.append(entry)
     return user_list
@@ -317,7 +316,7 @@ def get_testcase_error():
 def get_problem_avgscore():
     score_data = []
     for sqr in StudentQuestionResult.select():
-        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id, 'score': sqr.score}
+        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id.question_id, 'score': sqr.score}
         score_data.append(entry)
     return score_data
 
@@ -364,5 +363,5 @@ def date_cmp(x, y):
 if __name__ == '__main__':
     os.chdir('../../')
     # print(get__problem_score())
-    print(get_all_day_id())
+    print(get_time_less())
     # print(datetime.datetime.now().date())
