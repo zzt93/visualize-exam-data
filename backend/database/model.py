@@ -46,6 +46,8 @@ class StudentQuestionResult(BaseModel):
     question_id = ForeignKeyField(QuestionInExam)
     used_time = IntegerField(default=0)
     score = FloatField(default=0)
+    ac_list = CharField(default='')
+    wrong_list = CharField(default='')
     class Meta:
         primary_key = CompositeKey('question_id', 'student_id')
 
@@ -96,7 +98,6 @@ class Paste(BaseModel):
 
 
 # 9.平均编码速度分布图
-# todo test
 class Speed(BaseModel):
     student_id = ForeignKeyField(Student)
     speed = FloatField(help_text='speed 的单位是字符/分钟')

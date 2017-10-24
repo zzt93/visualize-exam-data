@@ -22,6 +22,17 @@ class MysqlConnector:
         cur.close()
         return res
 
+    def get_student_monitor_file(self, student_id, from_date, to_date):
+        cur = self.db.cursor()
+        cur.execute(
+            "SELECT e.monitor FROM auth_user a JOIN exams_examprojects e WHERE a.id = e.user_id AND a.username = '{}' AND e.create_time > '{}' AND e.create_time < '{}'".format(
+                student_id, from_date, to_date))
+        res = []
+        for row in cur.fetchall():
+            res.append(row[0])
+        cur.close()
+        return res
+
     def close(self):
         self.db.close()
 

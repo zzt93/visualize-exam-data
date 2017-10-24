@@ -1,6 +1,5 @@
 import os
 from backend.database.model import *
-from backend.preprocess.pre_process import merge_log_score
 from backend.util.config import EID
 from backend.util.mysql_connector import MysqlConnector
 from backend.util.constant import OperatorType
