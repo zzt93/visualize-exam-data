@@ -1,5 +1,7 @@
 import os
-ROOT_PATH = r'.\data\pic'
+DATA_PATH = r'.\data'
+ROOT_PATH = r'.\data\pic2'
+
 
 USER_PATH = os.path.join(ROOT_PATH, 'user')
 SCORE_PATH = os.path.join(ROOT_PATH, 'score')

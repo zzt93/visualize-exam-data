@@ -228,7 +228,10 @@ def show_time_div_preproblem(user_data: list, problem_list:list = [], title: str
     gp = df.groupby(['student_id', 'question_id'])
     df = gp['code_time', 'debug_time'].sum()
     df = df.reset_index(level=['student_id', 'question_id'])
-    df['average'] = df['code_time']/df['debug_time']
+    de_se = df['debug_time']
+    de_se = de_se.map(lambda x: x if x > 0 else 1)
+    df['average'] = df['code_time']/de_se
+
     df = df.groupby(['question_id'])['average'].mean()
     for problem in problem_list:
         problem = 'Q'+str(problem)

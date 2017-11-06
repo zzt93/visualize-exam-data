@@ -291,7 +291,7 @@ def get_testcase_error():
     for qid in QuestionInExam.select():
         test_data = []
         wrong_dict = {}
-        for tc in TestCase.select().where(TestCase.question_id == qid):
+        for tc in StudentQuestionResult.select().where(StudentQuestionResult.question_id == qid):
             wrong_str = tc.wrong_list
             wrong_list = wrong_str.strip('[').strip(']').split(", ")
             for wt in wrong_list:
