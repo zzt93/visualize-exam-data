@@ -1,12 +1,8 @@
 from peewee import *
-import random
-import time
-import datetime
-import string
 
-from backend.util.config import USER, PASS
+from backend.util.config import USER, PASS, DATABASE
 
-db = MySQLDatabase('visualize_exam', user=USER, password=PASS, charset='utf8mb4', autocommit=False)
+db = MySQLDatabase(DATABASE, user=USER, password=PASS, charset='utf8mb4', autocommit=False)
 
 def before_request_handler():
     db.connect()
