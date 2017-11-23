@@ -1,7 +1,7 @@
 import os
 from zipfile import ZipFile
 
-from backend.util.config import LOG_DIR, FROM_DATE, TO_DATE
+from backend.util.config import LOG_DIR
 from backend.util.log_data_transform import transform_test_log
 from backend.util.mysql_connector import MysqlConnector
 from backend.util.path_util import scan_dir
@@ -10,12 +10,16 @@ from backend.util.path_util import scan_dir
 def extract_score(log_file_zip, times):
     test_log_handler = []
     if os.path.isfile(log_file_zip):
-        with ZipFile(log_file_zip) as myzip:
-            for f in myzip.infolist():
-                (filepath, tempfilename) = os.path.split(f.filename)
-                (shortname, extension) = os.path.splitext(tempfilename)
-                if shortname == 'app':
-                    test_log_handler.append(myzip.open(f.filename))
+        try:
+            with ZipFile(log_file_zip) as myzip:
+                for f in myzip.infolist():
+                    (filepath, tempfilename) = os.path.split(f.filename)
+                    (shortname, extension) = os.path.splitext(tempfilename)
+                    if shortname == 'app':
+                        test_log_handler.append(myzip.open(f.filename))
+        except OSError as e:
+            print(log_file_zip)
+            print(e)
 
     test_cases = {}
     log = {}
@@ -98,7 +102,7 @@ def file_to_sid(eid):
     student_list = connector.get_all_student(eid)
     file_to_id = {}
     for sid in student_list:
-        file_to_id.update(connector.get_student_file(sid, FROM_DATE, TO_DATE))
+        file_to_id.update(connector.get_student_file(sid, eid))
 
     connector.close()
     return file_to_id, student_list

@@ -10,11 +10,11 @@ class MysqlConnector:
                              passwd="",  # your password
                              db="cpp_test_server")  # name of the data base
 
-    def get_student_file(self, student_id, from_date, to_date):
+    def get_student_file(self, student_id, eid):
         cur = self.db.cursor()
         cur.execute(
-            "SELECT e.log, e.monitor FROM auth_user a JOIN exams_examprojects e WHERE a.id = e.user_id AND a.username = '{}' AND e.create_time > '{}' AND e.create_time < '{}'".format(
-                student_id, from_date, to_date))
+            "SELECT ep.log, ep.monitor FROM auth_user a JOIN exams_examprojects ep, exams_exam e WHERE e.id = {} AND a.id = ep.user_id AND a.username = '{}' AND ep.create_time > e.begin_time AND ep.create_time <= e.end_time".format(
+               eid, student_id))
         res = {}
         for row in cur.fetchall():
             res[row[0]] = student_id
@@ -22,11 +22,11 @@ class MysqlConnector:
         cur.close()
         return res
 
-    def get_student_monitor_file(self, student_id, from_date, to_date):
+    def get_student_monitor_file(self, student_id, eid):
         cur = self.db.cursor()
         cur.execute(
-            "SELECT e.monitor FROM auth_user a JOIN exams_examprojects e WHERE a.id = e.user_id AND a.username = '{}' AND e.create_time > '{}' AND e.create_time < '{}'".format(
-                student_id, from_date, to_date))
+            "SELECT ep.monitor FROM auth_user a JOIN exams_examprojects ep, exams_exam e WHERE e.id = {} AND a.id = ep.user_id AND a.username = '{}' AND ep.create_time > e.begin_time AND ep.create_time <= e.end_time".format(
+                eid, student_id))
         res = []
         for row in cur.fetchall():
             res.append(row[0])
