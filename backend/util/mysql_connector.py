@@ -13,7 +13,7 @@ class MysqlConnector:
     def get_student_file(self, student_id, eid):
         cur = self.db.cursor()
         cur.execute(
-            "SELECT ep.log, ep.monitor FROM auth_user a JOIN exams_examprojects ep, exams_exam e WHERE e.id = {} AND a.id = ep.user_id AND a.username = '{}' AND ep.create_time > e.begin_time AND ep.create_time <= e.end_time".format(
+            "SELECT ep.log, ep.monitor FROM auth_user a JOIN exams_examprojects ep, exams_exam e WHERE e.id = {} AND a.id = ep.user_id AND a.username = '{}' AND ep.create_time > e.begin_time".format(
                eid, student_id))
         res = {}
         for row in cur.fetchall():
@@ -25,7 +25,7 @@ class MysqlConnector:
     def get_student_monitor_file(self, student_id, eid):
         cur = self.db.cursor()
         cur.execute(
-            "SELECT ep.monitor FROM auth_user a JOIN exams_examprojects ep, exams_exam e WHERE e.id = {} AND a.id = ep.user_id AND a.username = '{}' AND ep.create_time > e.begin_time AND ep.create_time <= e.end_time".format(
+            "SELECT ep.monitor FROM auth_user a JOIN exams_examprojects ep, exams_exam e WHERE e.id = {} AND a.id = ep.user_id AND a.username = '{}' AND ep.create_time > e.begin_time ".format(
                 eid, student_id))
         res = []
         for row in cur.fetchall():

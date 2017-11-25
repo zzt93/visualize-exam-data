@@ -15,8 +15,10 @@ def extract_score(log_file_zip, times):
                 for f in myzip.infolist():
                     (filepath, tempfilename) = os.path.split(f.filename)
                     (shortname, extension) = os.path.splitext(tempfilename)
-                    if shortname == 'app':
+                    if 'app' in shortname:
                         test_log_handler.append(myzip.open(f.filename))
+                    else:
+                        print("%s, %s" % (f.filename, log_file_zip))
         except OSError as e:
             print(log_file_zip)
             print(e)
@@ -83,7 +85,7 @@ def merge_log_score(eid, file_to_id=None, student_list=None):
         # assert student_id in score
         for question_id, score_dict in score_log.items():
             if question_id in score[student_id]:
-                if score[student_id][question_id] is not None and score[student_id][question_id]['score'] > score_dict['score']:
+                if score[student_id][question_id] is None or score[student_id][question_id]['score'] < score_dict['score']:
                     score[student_id][question_id] = score_dict
             else:
                 score[student_id][question_id] = score_dict
