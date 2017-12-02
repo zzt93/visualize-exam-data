@@ -1,12 +1,9 @@
 from peewee import *
-import random
-import time
-import datetime
-import string
 
-from backend.util.config import USER, PASS, DBNAME
+from backend.util.config import USER, PASS, DATABASE
 
-db = MySQLDatabase(DBNAME, user=USER, password=PASS, charset='utf8mb4', autocommit=False)
+db = MySQLDatabase(DATABASE, user=USER, password=PASS, charset='utf8mb4', autocommit=False)
+
 
 def before_request_handler():
     db.connect()
@@ -37,13 +34,15 @@ class StudentInExam(BaseModel):
 
 class QuestionInExam(BaseModel):
     exam_id = ForeignKeyField(Exam)
-    question_id = IntegerField(unique=True, primary_key=True)
+    question_id = IntegerField()
+    class Meta:
+        primary_key = CompositeKey('question_id', 'exam_id')
 
 # 13.学生题目得分分布柱状图
 # 16.每题编码时间过少的人
 class StudentQuestionResult(BaseModel):
     student_id = ForeignKeyField(Student)
-    question_id = ForeignKeyField(QuestionInExam)
+    question_id = IntegerField()
     used_time = IntegerField(default=0)
     score = FloatField(default=0)
     ac_list = CharField(default='')
@@ -54,7 +53,7 @@ class StudentQuestionResult(BaseModel):
 
 class TestCase(BaseModel):
     student_id = ForeignKeyField(Student)
-    question_id = ForeignKeyField(QuestionInExam)
+    question_id = IntegerField()
     ac_list = CharField(default='')
     wrong_list = CharField(default='')
     test_id = PrimaryKeyField()
@@ -77,7 +76,7 @@ class Operation(BaseModel):
 # 6.个人每天编码时间统计
 class CodeAndDebugTime(BaseModel):
     student_id = ForeignKeyField(Student)
-    question_id = ForeignKeyField(QuestionInExam)
+    question_id = IntegerField()
     code_time = IntegerField(default=0, help_text='unit: second')
     debug_time = IntegerField(default=0, help_text='unit: second')
     date = DateField()
@@ -89,7 +88,7 @@ class CodeAndDebugTime(BaseModel):
 # 8.粘贴内容分类统计柱状图
 class Paste(BaseModel):
     student_id = ForeignKeyField(Student)
-    question_id = ForeignKeyField(QuestionInExam)
+    question_id = IntegerField()
     paste_content = CharField(default='', max_length=1000)
     paste_type = IntegerField(default=0)
     happen_time = DateTimeField()
@@ -109,14 +108,14 @@ class Speed(BaseModel):
 class Debug(BaseModel):
     student_id = ForeignKeyField(Student)
     debug_count = IntegerField(default=0)
-    question_id = ForeignKeyField(QuestionInExam)
+    question_id = IntegerField()
     class Meta:
         primary_key = CompositeKey('student_id', 'question_id')
 
 
 # 14.编译错误出现的次数分布
 class BuildError(BaseModel):
-    question_id = ForeignKeyField(QuestionInExam)
+    question_id = IntegerField()
     error_code = CharField(max_length=20)
     count = IntegerField(default=0)
     class Meta:
@@ -126,7 +125,7 @@ class BuildError(BaseModel):
 # 15.编译失败的次数分布
 class BuildResult(BaseModel):
     student_id = ForeignKeyField(Student)
-    question_id = ForeignKeyField(QuestionInExam)
+    question_id = IntegerField()
     failed_count = IntegerField(default=0)
     success_count = IntegerField(default=0)
     class Meta:

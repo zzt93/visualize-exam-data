@@ -3,8 +3,9 @@ import ntpath
 import os
 from zipfile import ZipFile
 
+import datetime
+
 from backend.database.model import *
-from backend.interface.controller import get_all_problem_id
 from backend.preprocess.paste import get_paste_type
 from backend.preprocess.question import extract_question_id, extract_question_id_from_path, get_question_set
 from backend.preprocess.score import file_to_sid, merge_log_score
@@ -19,11 +20,16 @@ FIVE_MIN = 5 * 60
 
 def extract_monitor(monitor_file_zip):
     if os.path.isfile(monitor_file_zip):
-        with ZipFile(monitor_file_zip) as myzip:
-            for f in myzip.infolist():
-                (filepath, tempfilename) = os.path.split(f.filename)
-                if tempfilename == r'Dao\log.db' or tempfilename == 'log.db':
-                    return read_data(myzip.extract(f, path=os.path.join('.', 'tmp')))
+        # print(monitor_file_zip)
+        try:
+            with ZipFile(monitor_file_zip) as myzip:
+                for f in myzip.infolist():
+                    (filepath, tempfilename) = os.path.split(f.filename)
+                    if tempfilename == r'Dao\log.db' or tempfilename == 'log.db':
+                        return read_data(myzip.extract(f, path=os.path.join('.', 'tmp')))
+        except OSError as e:
+            print(monitor_file_zip)
+            print(e)
 
 
 def merge_monitor(new, original):
@@ -45,7 +51,7 @@ def sid_to_file(eid):
     student_list = connector.get_all_student(eid)
     id_to_file = {}
     for sid in student_list:
-        id_to_file[sid] = connector.get_student_monitor_file(sid, FROM_DATE, TO_DATE)
+        id_to_file[sid] = connector.get_student_monitor_file(sid, eid)
 
     connector.close()
     return id_to_file
@@ -65,35 +71,39 @@ def store_to_db(eid):
     # create tables
     create_tables_if_not_exists()
     # store exam
-    # Exam.get_or_create(exam_id=eid)
+    Exam.get_or_create(exam_id=eid)
 
     # store question
-    # question_set = get_question_set(eid)
-    # for question_id in question_set:
-    #     QuestionInExam.get_or_create(exam_id=eid, question_id=question_id)
+    question_set = get_question_set(eid)
+    for question_id in question_set:
+        QuestionInExam.get_or_create(exam_id=eid, question_id=question_id)
 
     file_to_id, student_list = file_to_sid(eid)
     # store student
-    # for sid in student_list:
-    #     Student.get_or_create(student_id=sid)
-    #     StudentInExam.get_or_create(student_id=sid, exam_id=eid)
+    for sid in student_list:
+        Student.get_or_create(student_id=sid)
+        StudentInExam.get_or_create(student_id=sid, exam_id=eid)
 
     # store score
     score, test_cases = merge_log_score(eid, file_to_id)
     for student_id, value in score.items():
         for question_id, score_dict in value.items():
+            if int(question_id) not in question_set:
+                continue
             StudentQuestionResult.get_or_create(student_id=student_id, question_id=question_id,
                                                                   defaults={'score': score_dict['score'], 'ac_list':score_dict['ac'],'wrong_list':score_dict['wrong']})
 
     #
     # store test cases
-    # for student_id, question_dict in test_cases.items():
-    #     for question_id, dict_list in question_dict.items():
-    #         for ac_dict in dict_list:
-    #             TestCase.create(student_id=student_id,
-    #                             question_id=question_id,
-    #                             ac_list=ac_dict['ac'],
-    #                             wrong_list=ac_dict['wrong'])
+    for student_id, question_dict in test_cases.items():
+        for question_id, dict_list in question_dict.items():
+            if int(question_id) not in question_set:
+                continue
+            for ac_dict in dict_list:
+                TestCase.create(student_id=student_id,
+                                question_id=question_id,
+                                ac_list=ac_dict['ac'],
+                                wrong_list=ac_dict['wrong'])
     db.commit()
 
     # store other monitor info

@@ -6,8 +6,9 @@ EID_list = [46, 47]
 
 LOG_DIR = 'uploads/log/2017/'
 
-USER = 'root'
-PASS = 'root'
-DBNAME = 'visualize_exam_first_exam'
+USER = 'cpp_test'
+PASS = 'cpp_test'
+DATABASE = 'visualize_exam'
 
 EXPERIMENT_NAME = 'first_exam'
+

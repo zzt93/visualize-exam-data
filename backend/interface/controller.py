@@ -56,7 +56,7 @@ def get_time_div_total():
         cnt = 0
         total_debug_time = 0
         total_code_time = 0
-        for cdt in CodeAndDebugTime.select().where(CodeAndDebugTime.question_id == qid):
+        for cdt in CodeAndDebugTime.select().where(CodeAndDebugTime.question_id == qid.question_id):
             cnt += 1
             total_code_time += cdt.code_time
             total_debug_time += cdt.debug_time
@@ -291,7 +291,8 @@ def get_testcase_error():
     for qid in QuestionInExam.select():
         test_data = []
         wrong_dict = {}
-        for tc in StudentQuestionResult.select().where(StudentQuestionResult.question_id == qid):
+
+        for tc in TestCase.select().where(TestCase.question_id == qid.question_id):
             wrong_str = tc.wrong_list
             wrong_list = wrong_str.strip('[').strip(']').split(", ")
             for wt in wrong_list:
@@ -362,5 +363,8 @@ def date_cmp(x, y):
 if __name__ == '__main__':
     os.chdir('../../')
     # print(get__problem_score())
+    get_time_less()
+    get_testcase_error()
+    get_time_div_total()
     print(get_time_less())
     # print(datetime.datetime.now().date())
