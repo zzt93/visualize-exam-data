@@ -1,6 +1,6 @@
 import os
 from backend.database.model import *
-from backend.util.config import EID
+from backend.util.config import EID, EID_list
 from backend.util.mysql_connector import MysqlConnector
 from backend.util.constant import OperatorType
 
@@ -350,7 +350,7 @@ def get_all_problem_id():
     global all_problem_id
     if all_problem_id is None:
         all_problem_id = []
-        for ques in QuestionInExam.select().where(QuestionInExam.exam_id == EID):
+        for ques in QuestionInExam.select().where(QuestionInExam.exam_id in EID_list):
             all_problem_id.append(ques.question_id)
     return all_problem_id
 

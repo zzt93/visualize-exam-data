@@ -7,7 +7,7 @@ class MysqlConnector:
     def __init__(self) -> None:
         self.db = MySQLdb.connect(host="localhost",  # your host, usually localhost
                              user="root",  # your username
-                             passwd="",  # your password
+                             passwd="root",  # your password
                              db="cpp_test_server")  # name of the data base
 
     def get_student_file(self, student_id, from_date, to_date):

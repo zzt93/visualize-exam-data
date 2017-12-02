@@ -18,86 +18,8 @@ def init():
 
 
 # time
-def run_process_personal():
-    result = get_process_personal()
-    print(result[0])
-    print(result[1])
-    print(result[2])
-
-
-def run_time_perproblem():
-    pass
-
-
-def run_time_div_preproblem():
-    pass
-
-
-def run_work_time():
-    pass
-
-
-def run_work_time_personal():
-    pass
-
-
-# copy
-def run_paste_length_personal():
-    pass
-
-
-def run_paste_content_classification():
-    pass
-
-
-# insert
-def run_coding_speed():
-    pass
-
-
-# debug
-def run_debug_personal():
-    pass
-
-
-def run_debug_total():
-    pass
-
-
-# score
-def run_score():
-    pass
-
-
-def run_problem_score():
-    pass
-
-
-# build
-def run_build_error_count():
-    pass
-
-
-# check
-def run_build_failed_count():
-    pass
-
-
-def run_time_less():
-    pass
-
-
-if __name__ == '__main__':
-    init()
-    problems = get_all_problem_id()
-    users = get_all_user_id()
-
-    # show_process_personal
-
-    result = get_time_total()
-
-
-    # show_time_detached
+# show_time_detached
+def run_time_detached(result, problems):
     print('start show time detached')
     method_path = os.path.join(TIME_PATH, 'user_time')
     method_path = os.path.join(method_path, 'time_detached')
@@ -105,9 +27,11 @@ if __name__ == '__main__':
     save_as_html(fig, method_path, 'total.html')
     for pro in problems:
         fig = show_time_detached(result, pro)
-        save_as_html(fig, method_path, 'Q'+str(pro)+'.html')
+        save_as_html(fig, method_path, 'Q' + str(pro) + '.html')
 
-    # show_time_total
+
+# show_time_total
+def run_time_total(result, problems):
     print('start show time total')
     method_path = os.path.join(TIME_PATH, 'user_time')
     method_path = os.path.join(method_path, 'time_total')
@@ -117,7 +41,9 @@ if __name__ == '__main__':
         fig = show_time_total(result, pro)
         save_as_html(fig, method_path, 'Q' + str(pro) + '.html')
 
-    # show_time_perproblem
+
+# show_time_perproblem
+def run_time_preproblem(result, problems, users):
     print('start show time preproblem')
     method_path = os.path.join(TIME_PATH, 'problem_time')
     method_path = os.path.join(method_path, 'total_time')
@@ -127,9 +53,11 @@ if __name__ == '__main__':
     for u in users:
         fig = show_time_perproblem(result, u, problems)
         if fig != None:
-            save_as_html(fig, method_path, u+'.html')
+            save_as_html(fig, method_path, u + '.html')
 
-    # show_time_div_preproblem
+
+# show_time_div_preproblem
+def run_time_div_preproblem(result, problems):
     print('start show time div preproblem')
     method_path = os.path.join(TIME_PATH, 'problem_time')
     method_path = os.path.join(method_path, 'div_time')
@@ -138,18 +66,17 @@ if __name__ == '__main__':
         save_as_html(fig, method_path, 'total.html')
 
 
-    work_time_data = get_work_time()
-
-    # show_work_time
+# show_work_time
+def run_work_time(work_time_data):
     print('start show work time')
     method_path = os.path.join(TIME_PATH, 'work_time')
     method_path = os.path.join(method_path, 'per_hour')
-
     fig = show_work_time(work_time_data)
     if fig != None:
         save_as_html(fig, method_path, 'total.html')
 
 
+def run_work_time_personal(result, users):
     # show_work_time_personal
     print('start show work time personal')
     method_path = os.path.join(TIME_PATH, 'work_time')
@@ -158,49 +85,42 @@ if __name__ == '__main__':
     for u in users:
         fig = show_work_time_personal(result, userid=u)
         if fig != None:
-            save_as_html(fig, method_path, str(u)+'.html')
+            save_as_html(fig, method_path, str(u) + '.html')
 
 
-
+# show_paste_length_personal
+def run_paste_length_personal(paste_length_data, users):
     print('start paste length personal')
-    paste_data = get_paste_length_personal()
-    paste_length_data = [t['pasta_data'] for t in paste_data]
-
-    # show_paste_length_personal
     method_path = os.path.join(COPY_PATH, 'paste_length')
     for u in users:
         fig = show_paste_length_personal(paste_length_data, u)
         if fig != None:
-            save_as_html(fig, method_path, str(u)+'.html')
+            save_as_html(fig, method_path, str(u) + '.html')
 
 
+# show_paste_content_classification
+def run_paste_content_classification(paste_cla_data, users):
     print('start paste content classification')
-    clas = get_paste_content_classification()
-    paste_cla_data = [t['paste_data'] for t in clas]
-    # show_paste_content_classification
     method_path = os.path.join(COPY_PATH, 'paste_classification')
     fig = show_paste_content_classification(paste_cla_data, None)
     save_as_html(fig, method_path, 'total.html')
     for u in users:
         fig = show_paste_content_classification(paste_cla_data, u)
         if fig != None:
-            save_as_html(fig, method_path, str(u)+'.html')
+            save_as_html(fig, method_path, str(u) + '.html')
 
 
-
-
+# show_coding_speed
+def run_coding_speed(code_speed_data):
     print('start code speed')
-    code_speed_data = get_coding_speed()
-    # show_coding_speed
     method_path = os.path.join(INSERT_PATH, 'code_speed')
     fig = show_coding_speed(code_speed_data)
     save_as_html(fig, method_path, 'total.html')
 
 
-    print('start debug personal')
-    debug_per_data = get_debug_personal()
-    debug_person_data = [t['debug_data'] for t in debug_per_data]
+def run_debug_personal(debug_person_data, users):
     # show_debug_personal
+    print('start debug personal')
     method_path = os.path.join(DEBUG_PATH, 'per_problem')
     fig = show_debug_personal(debug_person_data, None)
     if fig:
@@ -208,60 +128,56 @@ if __name__ == '__main__':
     for u in users:
         fig = show_debug_personal(debug_person_data, u)
         if fig:
-            save_as_html(fig, method_path, str(u)+'.html')
+            save_as_html(fig, method_path, str(u) + '.html')
 
 
+# show_debug_total
+def run_debug_total(debug_total_data):
     print('start debug total')
-    debug_total_data = get_debug_total()
-    # show_debug_total
     method_path = os.path.join(DEBUG_PATH, 'debug_count')
     fig = show_debug_total(debug_total_data)
     if fig:
         save_as_html(fig, method_path, 'total.html')
 
 
+# show_score
+def run_score(score_data):
     print('start score')
-    score_data = get_score()
-    for s in score_data:
-        s['score'] = s['score']/15
-    # show_score
     fig = show_score(score_data)
     if fig:
         save_as_html(fig, SCORE_PATH, 'total.html')
 
 
+# show_problem_score
+def run_problem_score(score_problem_data, problems):
     print('start score preproblem')
-    score_problem_data = get_problem_score()
-    # show_problem_score
     method_path = os.path.join(SCORE_PATH, 'pre_problem')
     for p in problems:
         fig = show_problem_score(score_problem_data, str(p))
         if fig:
-            save_as_html(fig, method_path, 'Q'+str(p)+'.html')
+            save_as_html(fig, method_path, 'Q' + str(p) + '.html')
 
 
+# show_testcase_error
+def run_testcase_error(testcase_data, problems):
     print('start testcase error')
-    test_data = get_testcase_error()
-    testcase_data = []
-    for te in test_data:
-        testcase_data.extend(te['test_data'])
-    # show_testcase_error
     method_path = os.path.join(SCORE_PATH, 'testcase')
     for p in problems:
         fig = show_testcase_error(testcase_data, str(p))
         if fig:
-            save_as_html(fig, method_path, 'Q'+str(p)+'.html')
+            save_as_html(fig, method_path, 'Q' + str(p) + '.html')
 
 
+# show_problem_avgscore
+def run_problem_avgscore(ave_score_data):
     print('start problem avg score')
-    ave_score_data = get_problem_avgscore()
-    # show_problem_avgscore
     fig = show_problem_avgscore(ave_score_data)
     save_as_html(fig, SCORE_PATH, 'ave_total.html')
 
+
+# show_build_error_count
+def run_build_error_count(build_error_data, problems):
     print('start build error count')
-    build_error_data = get_build_error_count()
-    # show_build_error_count
     method_path = os.path.join(BUILD_PATH, 'error_code')
     fig = show_build_error_count(build_error_data, None)
     if fig:
@@ -269,24 +185,79 @@ if __name__ == '__main__':
     for p in problems:
         fig = show_build_error_count(build_error_data, str(p))
         if fig:
-            save_as_html(fig, method_path, 'Q'+str(p)+'.html')
+            save_as_html(fig, method_path, 'Q' + str(p) + '.html')
 
+
+# show_build_failed_count
+def run_build_failed_count(build_failed_data):
     print('start build failed count')
-    build_failed_data = get_build_failed_count()
-    # show_build_failed_count
     fig = show_build_failed_count(build_failed_data)
     if fig:
         save_as_html(fig, BUILD_PATH, 'build_failed_total.html')
 
 
+# show_time_less
+def run_show_time_less(result):
     print('start time less')
-    less = get_time_less()
-    res = show_time_less(less)
-    # show_time_less
     method_path = os.path.join(ROOT_PATH, )
     res_data, res_count = show_time_less_logic(result)
     save_as_txt(res_data, method_path, 'less_time_user.txt')
     save_as_txt(res_count, method_path, 'less_time_count.txt')
+
+
+def main():
+    init()
+    print('start read data')
+    problems = get_all_problem_id()
+    users = get_all_user_id()
+    result = get_time_total()
+    work_time_data = get_work_time()
+    paste_data = get_paste_length_personal()
+    paste_length_data = [t['pasta_data'] for t in paste_data]
+    clas = get_paste_content_classification()
+    paste_cla_data = [t['paste_data'] for t in clas]
+    code_speed_data = get_coding_speed()
+    debug_per_data = get_debug_personal()
+    debug_person_data = [t['debug_data'] for t in debug_per_data]
+    debug_total_data = get_debug_total()
+    score_data = get_score()
+    for s in score_data:
+        s['score'] = s['score'] / len(problems)
+    score_problem_data = get_problem_score()
+    test_data = get_testcase_error()
+    testcase_data = []
+    for te in test_data:
+        testcase_data.extend(te['test_data'])
+    ave_score_data = get_problem_avgscore()
+    build_error_data = get_build_error_count()
+    build_failed_data = get_build_failed_count()
+    less = get_time_less()
+    res = show_time_less(less)
+    print('end read data')
+
+
+    run_time_detached(result, problems)
+    run_time_total(result, problems)
+    run_time_preproblem(result, problems, users)
+    run_time_div_preproblem(result, problems)
+    run_work_time(work_time_data)
+    run_work_time_personal(result, users)
+    run_paste_length_personal(paste_length_data, users)
+    run_paste_content_classification(paste_cla_data, users)
+    run_coding_speed(code_speed_data)
+    run_debug_personal(debug_person_data, users)
+    run_debug_total(debug_total_data)
+    run_score(score_data)
+    run_problem_score(score_problem_data, problems)
+    run_testcase_error(testcase_data, problems)
+    run_problem_avgscore(ave_score_data)
+    run_build_error_count(build_error_data, problems)
+    run_build_failed_count(build_failed_data)
+    run_show_time_less(result)
+
+
+if __name__ == '__main__':
+    main()
 
 
 
