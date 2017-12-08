@@ -28,7 +28,7 @@ def get_process_personal():
 def get_time_total():
     total = []
     for cdt in CodeAndDebugTime.select():
-        entry = {'student_id': cdt.student_id.student_id, 'question_id': cdt.question_id.question_id,
+        entry = {'student_id': cdt.student_id.student_id, 'question_id': cdt.question_id,
                  'dayid': str(cdt.date), 'code_time': cdt.code_time, 'debug_time': cdt.debug_time}
         total.append(entry)
     total.sort(key=lambda x: x['dayid'])
@@ -110,7 +110,7 @@ def get_work_time():
 def get_paste_length_personal():
     pasta_data = []
     for p in Paste.select():
-        entry = {'student_id': p.student_id.student_id, 'question_id': p.question_id.question_id,
+        entry = {'student_id': p.student_id.student_id, 'question_id': p.question_id,
                  'paste_content': p.paste_content, 'happen_time': p.happen_time}
         pasta_data.append({'pasta_data': entry, 'student_id': p.student_id.student_id})
     return pasta_data
@@ -130,9 +130,9 @@ def get_paste_content_classification():
     # return [{'paste_data': paste_data, 'student_id': student_id_value}]
     pasta_data = []
     source = Paste.raw(
-        'SELECT student_id_id, question_id_id, paste_type, count(*) AS cnt FROM paste GROUP BY student_id_id, question_id_id, paste_type')
+        'SELECT student_id_id, question_id, paste_type, count(*) AS cnt FROM paste GROUP BY student_id_id, question_id, paste_type')
     for i in source:
-        paste_data = {'student_id': i.student_id.student_id, 'question_id': i.question_id.question_id,
+        paste_data = {'student_id': i.student_id.student_id, 'question_id': i.question_id,
                       'paste_class': i.paste_type, 'count': i.cnt}
         pasta_data.append({'paste_data': paste_data, 'student_id': i.student_id.student_id})
     return pasta_data
@@ -163,10 +163,10 @@ def get_coding_speed():
 def get_debug_personal():
     result = []
     for de in Debug.select():
-        debug_data = {'student_id': de.student_id.student_id, 'problem_id': de.question_id.question_id,
+        debug_data = {'student_id': de.student_id.student_id, 'problem_id': de.question_id,
                       'debug_count': de.debug_count}
-        entry = {'debug_data': debug_data, 'problem_id': de.question_id.question_id,
-                 'question_id': de.question_id.question_id}
+        entry = {'debug_data': debug_data, 'problem_id': de.question_id,
+                 'question_id': de.question_id}
         result.append(entry)
     return result
 
@@ -221,7 +221,7 @@ def get_problem_score():
     """
     score_data = []
     for sqr in StudentQuestionResult.select():
-        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id.question_id, 'score': sqr.score}
+        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id, 'score': sqr.score}
         score_data.append(entry)
     return score_data
 
@@ -241,7 +241,7 @@ def get_build_error_count():
     # return build_error_data
     build_error_data = []
     for be in BuildError.select():
-        entry = {'question_id': be.question_id.question_id, 'error_code': be.error_code, 'count': be.count}
+        entry = {'question_id': be.question_id, 'error_code': be.error_code, 'count': be.count}
         build_error_data.append(entry)
     return build_error_data
 
@@ -258,7 +258,7 @@ def get_build_failed_count():
     # return build_failed_data
     build_data = []
     for br in BuildResult.select():
-        entry = {'question_id': br.question_id.question_id, 'student_id': br.student_id.student_id, 'failed_count': br.failed_count,
+        entry = {'question_id': br.question_id, 'student_id': br.student_id.student_id, 'failed_count': br.failed_count,
                  'success_count': br.success_count}
         build_data.append(entry)
     return build_data
@@ -316,7 +316,7 @@ def get_testcase_error():
 def get_problem_avgscore():
     score_data = []
     for sqr in StudentQuestionResult.select():
-        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id.question_id, 'score': sqr.score}
+        entry = {'student_id': sqr.student_id.student_id, 'question_id': sqr.question_id, 'score': sqr.score}
         score_data.append(entry)
     return score_data
 
