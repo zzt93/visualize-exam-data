@@ -222,7 +222,7 @@ def main():
     debug_total_data = get_debug_total()
     score_data = get_score()
     for s in score_data:
-        s['score'] = s['score'] / len(problems)
+        s['score'] = s['score'] / len(set(problems))
     score_problem_data = get_problem_score()
     test_data = get_testcase_error()
     testcase_data = []
