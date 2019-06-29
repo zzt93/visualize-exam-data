@@ -1,14 +1,14 @@
-FROM_DATE='2017-11-23 08:00:00'
-TO_DATE='2017-11-23 12:30:00'
+FROM_DATE = '2017-12-21 07:00:00'
+TO_DATE = '2017-12-21 12:30:00'
 
-EID = 46
-EID_list = [46, 47]
+EID = 67
+EID_list = [67, 68]
 
 LOG_DIR = 'uploads/log/2017/'
 
-USER = 'cpp_test'
-PASS = 'cpp_test'
-DATABASE = 'visualize_exam'
+USER = 'root'
+PASS = 'root'
+DATABASE = 'visualize_exam_third_exam'
 
-EXPERIMENT_NAME = 'first_exam'
+EXPERIMENT_NAME = 'third_exam'
 
